@@ -5,6 +5,7 @@ import com.anthropic.claude.sdk.errors.ClaudeSDKException;
 import com.anthropic.claude.sdk.errors.MessageParseException;
 import com.anthropic.claude.sdk.types.ClaudeAgentOptions;
 import com.anthropic.claude.sdk.types.Message;
+import com.anthropic.claude.sdk.types.ResultMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,6 +129,44 @@ public class ClaudeSDKClient implements AutoCloseable {
     }
 
     /**
+     * Receives messages from Claude until a ResultMessage is received.
+     * This iterator terminates after receiving a ResultMessage, unlike
+     * receiveMessages() which continues indefinitely.
+     *
+     * @return An iterator of messages that stops after a ResultMessage
+     */
+    public Iterator<Message> receiveResponse() {
+        return new Iterator<Message>() {
+            private Message nextMessage;
+            private boolean done = false;
+
+            @Override
+            public boolean hasNext() {
+                if (done) {
+                    return false;
+                }
+
+                try {
+                    nextMessage = messageQueue.take();
+                    if (nextMessage instanceof ResultMessage) {
+                        done = true;
+                    }
+                    return true;
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    done = true;
+                    return false;
+                }
+            }
+
+            @Override
+            public Message next() {
+                return nextMessage;
+            }
+        };
+    }
+
+    /**
      * Sends an interrupt signal to Claude.
      */
     public void interrupt() {
@@ -155,6 +194,46 @@ public class ClaudeSDKClient implements AutoCloseable {
             sendMessage(message);
         } catch (IOException e) {
             logger.error("Failed to set permission mode", e);
+        }
+    }
+
+    /**
+     * Dynamically changes the AI model during the conversation.
+     *
+     * @param model The model to switch to (e.g., "sonnet", "opus", "haiku")
+     */
+    public void setModel(@Nullable String model) {
+        try {
+            Map<String, Object> message = new HashMap<>();
+            message.put("type", "control");
+            message.put("request", "set_model");
+            message.put("model", model);
+            sendMessage(message);
+        } catch (IOException e) {
+            logger.error("Failed to set model", e);
+        }
+    }
+
+    /**
+     * Retrieves server capabilities and available commands.
+     *
+     * @return A map containing server information, or null if unavailable
+     */
+    @Nullable
+    public Map<String, Object> getServerInfo() {
+        try {
+            Map<String, Object> message = new HashMap<>();
+            message.put("type", "control");
+            message.put("request", "server_info");
+            sendMessage(message);
+
+            // Wait for response (simplified implementation)
+            // In a production implementation, this should use a proper request/response pattern
+            logger.debug("Server info requested");
+            return null; // TODO: Implement proper response handling
+        } catch (IOException e) {
+            logger.error("Failed to get server info", e);
+            return null;
         }
     }
 
