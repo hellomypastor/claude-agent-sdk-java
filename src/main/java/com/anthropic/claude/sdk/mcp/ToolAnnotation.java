@@ -8,16 +8,14 @@ import java.lang.annotation.Target;
 /**
  * Annotation for marking methods as MCP tools.
  *
- * Example usage:
+ * <p>Example usage:</p>
  * <pre>
- * {@code
- * @Tool(name = "greet", description = "Greet a user")
- * public CompletableFuture<Map<String, Object>> greetUser(Map<String, Object> args) {
+ * &#64;Tool(name = "greet", description = "Greet a user")
+ * public CompletableFuture&lt;Map&lt;String, Object&gt;&gt; greetUser(Map&lt;String, Object&gt; args) {
  *     String name = (String) args.get("name");
  *     return CompletableFuture.completedFuture(Map.of(
  *         "content", List.of(Map.of("type", "text", "text", "Hello, " + name + "!"))
  *     ));
- * }
  * }
  * </pre>
  */
@@ -26,11 +24,15 @@ import java.lang.annotation.Target;
 public @interface ToolAnnotation {
     /**
      * The name of the tool.
+     *
+     * @return the tool name
      */
     String name();
 
     /**
      * A description of what the tool does.
+     *
+     * @return the tool description
      */
     String description();
 }

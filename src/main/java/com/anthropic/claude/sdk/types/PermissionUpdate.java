@@ -72,6 +72,8 @@ public class PermissionUpdate {
 
     /**
      * Convert to dictionary format for CLI protocol.
+     *
+     * @return a map representation of this permission update
      */
     public Map<String, Object> toDict() {
         Map<String, Object> dict = new HashMap<>();

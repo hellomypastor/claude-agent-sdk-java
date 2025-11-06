@@ -44,6 +44,11 @@ public class HookOutput {
         return new Builder();
     }
 
+    /**
+     * Converts this hook output to a map representation.
+     *
+     * @return a map containing all non-null hook output fields
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         if (continue_ != null) map.put("continue", continue_);
