@@ -78,6 +78,31 @@ ClaudeAgentOptions options = ClaudeAgentOptions.builder()
 Iterator<Message> messages = ClaudeAgent.query("Tell me a joke", options);
 ```
 
+### Advanced Configuration
+
+```java
+// Configure with agent definitions, environment variables, and session management
+Map<String, AgentDefinition> agents = new HashMap<>();
+agents.put("coder", AgentDefinition.builder(
+    "A coding specialist",
+    "You are an expert programmer"
+).tools(Arrays.asList("Read", "Write", "Bash")).build());
+
+Map<String, String> env = new HashMap<>();
+env.put("MY_API_KEY", "secret-key");
+
+ClaudeAgentOptions options = ClaudeAgentOptions.builder()
+    .cliPath("/custom/path/to/claude")  // Explicit CLI path
+    .agents(agents)                      // Agent definitions
+    .disallowedTools(Arrays.asList("Bash"))  // Block specific tools
+    .env(env)                            // Custom environment variables
+    .continueConversation(true)          // Continue from previous session
+    .user("user123")                     // User identifier
+    .includePartialMessages(true)        // Stream partial messages
+    .maxBudgetUsd(1.0)                   // Budget limit
+    .build();
+```
+
 ## Advanced Usage
 
 ### Bidirectional Client
@@ -233,6 +258,7 @@ The `ClaudeAgentOptions` builder supports:
 | Option | Type | Description |
 |--------|------|-------------|
 | `allowedTools` | `List<String>` | Tools Claude can use (e.g., "Read", "Write", "Bash") |
+| `disallowedTools` | `List<String>` | Tools that should not be allowed |
 | `systemPrompt` | `String` | Custom system prompt |
 | `mcpServers` | `Map<String, McpServerConfig>` | MCP server configurations |
 | `permissionMode` | `PermissionMode` | Permission mode (DEFAULT, ACCEPT_EDITS, PLAN, BYPASS_PERMISSIONS) |
@@ -241,6 +267,17 @@ The `ClaudeAgentOptions` builder supports:
 | `cwd` | `Path` or `String` | Working directory |
 | `model` | `String` | Claude model to use |
 | `maxThinkingTokens` | `Integer` | Maximum thinking tokens |
+| `cliPath` | `Path` or `String` | Explicit path to Claude CLI executable |
+| `agents` | `Map<String, AgentDefinition>` | Agent definitions for specialized tasks |
+| `continueConversation` | `boolean` | Continue an existing conversation |
+| `resume` | `String` | Session ID to resume from |
+| `env` | `Map<String, String>` | Environment variables for CLI process |
+| `addDirs` | `List<Path>` | Additional directories to include |
+| `user` | `String` | User identifier |
+| `includePartialMessages` | `boolean` | Include partial messages in stream |
+| `forkSession` | `boolean` | Fork the session |
+| `canUseTool` | `BiFunction` | Custom function to determine tool permission |
+| `hooks` | `Map<String, List<HookMatcher>>` | Hook matchers for policy enforcement |
 
 ## Examples
 
