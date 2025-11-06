@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 
 /**
  * Configuration options for Claude Agent.
@@ -56,6 +57,23 @@ public class ClaudeAgentOptions {
     private final String user;
     private final boolean includePartialMessages;
     private final boolean forkSession;
+    // Additional Python SDK fields
+    @Nullable
+    private final String permissionPromptToolName;
+    @Nullable
+    private final String settings;
+    @Nullable
+    private final Map<String, String> extraArgs;
+    @Nullable
+    private final Integer maxBufferSize;
+    @Nullable
+    private final Object debugStderr;
+    @Nullable
+    private final Consumer<String> stderr;
+    @Nullable
+    private final List<SettingSource> settingSources;
+    @Nullable
+    private final List<SdkPluginConfig> plugins;
 
     private ClaudeAgentOptions(Builder builder) {
         this.allowedTools = builder.allowedTools;
@@ -80,6 +98,15 @@ public class ClaudeAgentOptions {
         this.user = builder.user;
         this.includePartialMessages = builder.includePartialMessages;
         this.forkSession = builder.forkSession;
+        // Additional fields
+        this.permissionPromptToolName = builder.permissionPromptToolName;
+        this.settings = builder.settings;
+        this.extraArgs = builder.extraArgs;
+        this.maxBufferSize = builder.maxBufferSize;
+        this.debugStderr = builder.debugStderr;
+        this.stderr = builder.stderr;
+        this.settingSources = builder.settingSources;
+        this.plugins = builder.plugins;
     }
 
     public static Builder builder() {
@@ -188,6 +215,46 @@ public class ClaudeAgentOptions {
         return forkSession;
     }
 
+    @Nullable
+    public String getPermissionPromptToolName() {
+        return permissionPromptToolName;
+    }
+
+    @Nullable
+    public String getSettings() {
+        return settings;
+    }
+
+    @Nullable
+    public Map<String, String> getExtraArgs() {
+        return extraArgs;
+    }
+
+    @Nullable
+    public Integer getMaxBufferSize() {
+        return maxBufferSize;
+    }
+
+    @Nullable
+    public Object getDebugStderr() {
+        return debugStderr;
+    }
+
+    @Nullable
+    public Consumer<String> getStderr() {
+        return stderr;
+    }
+
+    @Nullable
+    public List<SettingSource> getSettingSources() {
+        return settingSources;
+    }
+
+    @Nullable
+    public List<SdkPluginConfig> getPlugins() {
+        return plugins;
+    }
+
     public static class Builder {
         private List<String> allowedTools;
         private String systemPrompt;
@@ -211,6 +278,15 @@ public class ClaudeAgentOptions {
         private String user;
         private boolean includePartialMessages = false;
         private boolean forkSession = false;
+        // Additional fields
+        private String permissionPromptToolName;
+        private String settings;
+        private Map<String, String> extraArgs;
+        private Integer maxBufferSize;
+        private Object debugStderr;
+        private Consumer<String> stderr;
+        private List<SettingSource> settingSources;
+        private List<SdkPluginConfig> plugins;
 
         private Builder() {
         }
@@ -393,6 +469,94 @@ public class ClaudeAgentOptions {
          */
         public Builder forkSession(boolean forkSession) {
             this.forkSession = forkSession;
+            return this;
+        }
+
+        /**
+         * Set the tool name to use for permission prompts.
+         *
+         * @param permissionPromptToolName tool name for permission prompts
+         * @return this builder
+         */
+        public Builder permissionPromptToolName(String permissionPromptToolName) {
+            this.permissionPromptToolName = permissionPromptToolName;
+            return this;
+        }
+
+        /**
+         * Set the settings configuration path.
+         *
+         * @param settings settings path
+         * @return this builder
+         */
+        public Builder settings(String settings) {
+            this.settings = settings;
+            return this;
+        }
+
+        /**
+         * Set extra command-line arguments.
+         *
+         * @param extraArgs extra arguments map
+         * @return this builder
+         */
+        public Builder extraArgs(Map<String, String> extraArgs) {
+            this.extraArgs = extraArgs;
+            return this;
+        }
+
+        /**
+         * Set maximum buffer size for communication.
+         *
+         * @param maxBufferSize maximum buffer size in bytes
+         * @return this builder
+         */
+        public Builder maxBufferSize(Integer maxBufferSize) {
+            this.maxBufferSize = maxBufferSize;
+            return this;
+        }
+
+        /**
+         * Set debug stderr output stream or handler.
+         *
+         * @param debugStderr debug stderr handler
+         * @return this builder
+         */
+        public Builder debugStderr(Object debugStderr) {
+            this.debugStderr = debugStderr;
+            return this;
+        }
+
+        /**
+         * Set stderr message consumer.
+         *
+         * @param stderr stderr message consumer
+         * @return this builder
+         */
+        public Builder stderr(Consumer<String> stderr) {
+            this.stderr = stderr;
+            return this;
+        }
+
+        /**
+         * Set setting sources to use.
+         *
+         * @param settingSources list of setting sources
+         * @return this builder
+         */
+        public Builder settingSources(List<SettingSource> settingSources) {
+            this.settingSources = settingSources;
+            return this;
+        }
+
+        /**
+         * Set SDK plugins to load.
+         *
+         * @param plugins list of plugin configurations
+         * @return this builder
+         */
+        public Builder plugins(List<SdkPluginConfig> plugins) {
+            this.plugins = plugins;
             return this;
         }
 

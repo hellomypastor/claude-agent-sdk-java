@@ -24,7 +24,7 @@ public class PermissionUpdate {
     @Nullable
     private final List<String> directories;
     @Nullable
-    private final String destination;
+    private final PermissionUpdateDestination destination;
 
     public PermissionUpdate(
             String type,
@@ -32,7 +32,7 @@ public class PermissionUpdate {
             @Nullable PermissionBehavior behavior,
             @Nullable PermissionMode mode,
             @Nullable List<String> directories,
-            @Nullable String destination) {
+            @Nullable PermissionUpdateDestination destination) {
         this.type = type;
         this.rules = rules;
         this.behavior = behavior;
@@ -66,7 +66,7 @@ public class PermissionUpdate {
     }
 
     @Nullable
-    public String getDestination() {
+    public PermissionUpdateDestination getDestination() {
         return destination;
     }
 
@@ -91,7 +91,7 @@ public class PermissionUpdate {
             dict.put("directories", directories);
         }
         if (destination != null) {
-            dict.put("destination", destination);
+            dict.put("destination", destination.getValue());
         }
         return dict;
     }
