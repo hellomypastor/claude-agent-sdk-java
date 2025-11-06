@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * Configuration options for Claude Agent.
@@ -29,7 +29,7 @@ public class ClaudeAgentOptions {
     @Nullable
     private final Double maxBudgetUsd;
     @Nullable
-    private final Function<ToolUseBlock, ToolPermissionContext, PermissionResult> canUseTool;
+    private final BiFunction<ToolUseBlock, ToolPermissionContext, PermissionResult> canUseTool;
     @Nullable
     private final Map<String, List<HookMatcher>> hooks;
     @Nullable
@@ -88,7 +88,7 @@ public class ClaudeAgentOptions {
     }
 
     @Nullable
-    public Function<ToolUseBlock, ToolPermissionContext, PermissionResult> getCanUseTool() {
+    public BiFunction<ToolUseBlock, ToolPermissionContext, PermissionResult> getCanUseTool() {
         return canUseTool;
     }
 
@@ -119,7 +119,7 @@ public class ClaudeAgentOptions {
         private PermissionMode permissionMode;
         private Integer maxTurns;
         private Double maxBudgetUsd;
-        private Function<ToolUseBlock, ToolPermissionContext, PermissionResult> canUseTool;
+        private BiFunction<ToolUseBlock, ToolPermissionContext, PermissionResult> canUseTool;
         private Map<String, List<HookMatcher>> hooks;
         private Path cwd;
         private String model;
@@ -158,7 +158,7 @@ public class ClaudeAgentOptions {
             return this;
         }
 
-        public Builder canUseTool(Function<ToolUseBlock, ToolPermissionContext, PermissionResult> canUseTool) {
+        public Builder canUseTool(BiFunction<ToolUseBlock, ToolPermissionContext, PermissionResult> canUseTool) {
             this.canUseTool = canUseTool;
             return this;
         }
