@@ -1,18 +1,3 @@
-# Compiled class files
-*.class
-
-# Log files
-*.log
-
-# Package Files
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
 # Maven
 target/
 pom.xml.tag
@@ -25,46 +10,28 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
-# Gradle
-.gradle/
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-# IntelliJ IDEA
+# IDE
 .idea/
-*.iws
 *.iml
 *.ipr
+*.iws
 out/
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
 
-# Eclipse
-.classpath
-.project
-.settings/
-bin/
-
-# NetBeans
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-# VS Code
-.vscode/
-
-# Mac
+# OS
 .DS_Store
-
-# Windows
-Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 ehthumbs.db
-Desktop.ini
+Thumbs.db
 
-# Temporary files
-*.swp
-*.swo
-*~
-.tmp/
+# Java
+*.class
+*.log
+hs_err_pid*
