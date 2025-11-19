@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -356,7 +357,7 @@ public final class StreamingQuery implements AutoCloseable {
         } catch (CompletionException ex) {
             throw new CLIConnectionException("Hook callback failed", ex.getCause());
         }
-        sendControlSuccess(requestId, hookOutput != null ? hookOutput : Collections.emptyMap());
+        sendControlSuccess(requestId, normalizeHookOutput(hookOutput));
     }
 
     private List<Map<String, Object>> extractSuggestions(JsonNode suggestionsNode) {
@@ -448,6 +449,24 @@ public final class StreamingQuery implements AutoCloseable {
         response.set("response", inner);
 
         transport.write(response.toString()).join();
+    }
+
+    private Map<String, Object> normalizeHookOutput(Map<String, Object> hookOutput) {
+        if (hookOutput == null || hookOutput.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<String, Object> normalized = new HashMap<>();
+        for (Map.Entry<String, Object> entry : hookOutput.entrySet()) {
+            String key = entry.getKey();
+            if ("async_".equals(key)) {
+                normalized.put("async", entry.getValue());
+            } else if ("continue_".equals(key)) {
+                normalized.put("continue", entry.getValue());
+            } else {
+                normalized.put(key, entry.getValue());
+            }
+        }
+        return normalized;
     }
 
     @Override

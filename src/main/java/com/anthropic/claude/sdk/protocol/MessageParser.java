@@ -133,6 +133,10 @@ public class MessageParser {
 
         String subtype = root.get("subtype").asText();
 
+        Object structuredOutput = root.has("structured_output")
+                ? objectMapper.convertValue(root.get("structured_output"), Object.class)
+                : null;
+
         return new ResultMessage(
                 subtype,
                 durationMs,
@@ -142,7 +146,8 @@ public class MessageParser {
                 sessionId,
                 totalCostUsd,
                 usage,
-                result
+                result,
+                structuredOutput
         );
     }
 

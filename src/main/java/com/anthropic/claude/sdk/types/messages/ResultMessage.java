@@ -41,6 +41,9 @@ public final class ResultMessage implements Message {
     @JsonProperty("result")
     private Object result;
 
+    @JsonProperty("structured_output")
+    private Object structuredOutput;
+
     @Override
     public String getType() {
         return "result";

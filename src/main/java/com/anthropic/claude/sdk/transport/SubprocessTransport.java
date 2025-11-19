@@ -4,7 +4,9 @@ import com.anthropic.claude.sdk.exceptions.CLIConnectionException;
 import com.anthropic.claude.sdk.exceptions.CLINotFoundException;
 import com.anthropic.claude.sdk.exceptions.ProcessException;
 import com.anthropic.claude.sdk.internal.CLIFinder;
+import com.anthropic.claude.sdk.types.options.AgentDefinition;
 import com.anthropic.claude.sdk.types.options.ClaudeAgentOptions;
+import com.anthropic.claude.sdk.types.options.SdkPluginConfig;
 import com.anthropic.claude.sdk.types.options.SettingSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -17,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -27,12 +30,14 @@ public class SubprocessTransport implements Transport {
 
     private static final Logger logger = LoggerFactory.getLogger(SubprocessTransport.class);
     private static final String SDK_VERSION = "0.1.0";
+    private static final int DEFAULT_BUFFER_SIZE = 1024 * 1024;
 
     private final String prompt;
     private final boolean streamingMode;
     private final ClaudeAgentOptions options;
     private final String cliPath;
     private final ObjectMapper objectMapper;
+    private final int bufferSize;
     private final ExecutorService executor;
 
     private Process process;
@@ -59,6 +64,9 @@ public class SubprocessTransport implements Transport {
         this.objectMapper = new ObjectMapper();
         this.executor = Executors.newCachedThreadPool();
         this.ready = false;
+        this.bufferSize = options.getMaxBufferSize() != null && options.getMaxBufferSize() > 0
+                ? options.getMaxBufferSize()
+                : DEFAULT_BUFFER_SIZE;
     }
 
     @Override
@@ -90,15 +98,18 @@ public class SubprocessTransport implements Transport {
 
                 // Setup I/O streams
                 stdoutReader = new BufferedReader(
-                        new InputStreamReader(process.getInputStream())
+                        new InputStreamReader(process.getInputStream()),
+                        bufferSize
                 );
 
                 stdinWriter = new BufferedWriter(
-                        new OutputStreamWriter(process.getOutputStream())
+                        new OutputStreamWriter(process.getOutputStream()),
+                        bufferSize
                 );
 
                 stderrReader = new BufferedReader(
-                        new InputStreamReader(process.getErrorStream())
+                        new InputStreamReader(process.getErrorStream()),
+                        bufferSize
                 );
 
                 // Start stderr reader in background
@@ -232,6 +243,10 @@ public class SubprocessTransport implements Transport {
             cmd.add("--model");
             cmd.add(options.getModel());
         }
+        if (options.getFallbackModel() != null) {
+            cmd.add("--fallback-model");
+            cmd.add(options.getFallbackModel());
+        }
 
         // Permission mode
         if (options.getPermissionMode() != null) {
@@ -262,13 +277,17 @@ public class SubprocessTransport implements Transport {
             cmd.add(options.getSettings());
         }
 
+        if (options.getUser() != null) {
+            cmd.add("--user");
+            cmd.add(options.getUser());
+        }
+
         // Setting sources
         if (!options.getSettingSources().isEmpty()) {
             cmd.add("--setting-sources");
             cmd.add(options.getSettingSources().stream()
                     .map(SettingSource::getValue)
-                    .reduce((a, b) -> a + "," + b)
-                    .orElse(""));
+                    .collect(Collectors.joining(",")));
         }
 
         // Max thinking tokens
@@ -286,11 +305,14 @@ public class SubprocessTransport implements Transport {
         // MCP servers
         if (!options.getMcpServers().isEmpty()) {
             try {
-                Map<String, Object> mcpConfig = new HashMap<>();
-                mcpConfig.put("mcpServers", options.getMcpServers());
-                String mcpJson = objectMapper.writeValueAsString(mcpConfig);
-                cmd.add("--mcp-config");
-                cmd.add(mcpJson);
+                Map<String, Object> sanitized = sanitizeMcpServers(options.getMcpServers());
+                if (!sanitized.isEmpty()) {
+                    Map<String, Object> mcpConfig = new HashMap<>();
+                    mcpConfig.put("mcpServers", sanitized);
+                    String mcpJson = objectMapper.writeValueAsString(mcpConfig);
+                    cmd.add("--mcp-config");
+                    cmd.add(mcpJson);
+                }
             } catch (Exception e) {
                 logger.warn("Failed to serialize MCP config", e);
             }
@@ -304,6 +326,45 @@ public class SubprocessTransport implements Transport {
         // Fork session
         if (options.isForkSession()) {
             cmd.add("--fork-session");
+        }
+
+        // Agents
+        if (!options.getAgents().isEmpty()) {
+            try {
+                Map<String, Object> payload = new HashMap<>();
+                for (Map.Entry<String, AgentDefinition> entry : options.getAgents().entrySet()) {
+                    AgentDefinition definition = entry.getValue();
+                    payload.put(entry.getKey(), definition != null ? definition.toMap() : Collections.emptyMap());
+                }
+                cmd.add("--agents");
+                cmd.add(objectMapper.writeValueAsString(payload));
+            } catch (Exception e) {
+                logger.warn("Failed to serialize agents", e);
+            }
+        }
+
+        // Plugins
+        if (!options.getPlugins().isEmpty()) {
+            for (SdkPluginConfig plugin : options.getPlugins()) {
+                if (plugin.getType() == SdkPluginConfig.PluginType.LOCAL && plugin.getPath() != null) {
+                    cmd.add("--plugin-dir");
+                    cmd.add(plugin.getPath().toString());
+                } else {
+                    logger.warn("Unsupported plugin configuration: {}", plugin.getType());
+                }
+            }
+        }
+
+        if (options.getOutputFormat() != null
+                && "json_schema".equals(options.getOutputFormat().get("type"))
+                && options.getOutputFormat().get("schema") != null) {
+            try {
+                String schemaJson = objectMapper.writeValueAsString(options.getOutputFormat().get("schema"));
+                cmd.add("--json-schema");
+                cmd.add(schemaJson);
+            } catch (Exception e) {
+                logger.warn("Failed to serialize structured output schema", e);
+            }
         }
 
         // Extra args
@@ -345,5 +406,31 @@ public class SubprocessTransport implements Transport {
                 logger.error("Error reading stderr", e);
             }
         }
+    }
+
+    private Map<String, Object> sanitizeMcpServers(Map<String, Object> servers) {
+        Map<String, Object> sanitized = new HashMap<>();
+        for (Map.Entry<String, Object> entry : servers.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof Map<?, ?>) {
+                Map<?, ?> rawMap = (Map<?, ?>) value;
+                Map<String, Object> normalized = new HashMap<>();
+                for (Map.Entry<?, ?> inner : rawMap.entrySet()) {
+                    Object key = inner.getKey();
+                    if (!(key instanceof String)) {
+                        continue;
+                    }
+                    String keyStr = (String) key;
+                    if ("instance".equals(keyStr)) {
+                        continue;
+                    }
+                    normalized.put(keyStr, inner.getValue());
+                }
+                sanitized.put(entry.getKey(), normalized);
+            } else if (value != null) {
+                sanitized.put(entry.getKey(), value);
+            }
+        }
+        return sanitized;
     }
 }

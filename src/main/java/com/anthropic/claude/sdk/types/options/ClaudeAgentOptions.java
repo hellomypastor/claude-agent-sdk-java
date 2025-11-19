@@ -29,6 +29,7 @@ public class ClaudeAgentOptions {
     private final Integer maxTurns;
     private final Double maxBudgetUsd;
     private final String model;
+    private final String fallbackModel;
     private final PermissionMode permissionMode;
     private final String permissionPromptToolName;
     private final ToolPermissionCallback canUseTool;
@@ -68,9 +69,14 @@ public class ClaudeAgentOptions {
     @Builder.Default
     private final boolean forkSession = false;
 
-    @Singular("agent")
-    private final Map<String, Object> agents;
+    private final String user;
+    private final Integer maxBufferSize;
 
-    @Singular("plugin")
-    private final Map<String, Object> plugins;
+    @Singular("agent")
+    private final Map<String, AgentDefinition> agents;
+
+    @Singular
+    private final List<SdkPluginConfig> plugins;
+
+    private final Map<String, Object> outputFormat;
 }
