@@ -65,10 +65,10 @@ public final class StreamingQuery implements AutoCloseable {
     private final AtomicInteger nextRequestId;
 
     public StreamingQuery(
-        Transport transport,
-        MessageParser parser,
-        ToolPermissionCallback canUseTool,
-        Map<String, List<HookMatcher>> hooks
+            Transport transport,
+            MessageParser parser,
+            ToolPermissionCallback canUseTool,
+            Map<String, List<HookMatcher>> hooks
     ) {
         this.transport = transport;
         this.parser = parser;
@@ -127,8 +127,8 @@ public final class StreamingQuery implements AutoCloseable {
      */
     public Stream<Message> streamMessages() {
         Spliterator<Message> spliterator = new Spliterators.AbstractSpliterator<Message>(
-            Long.MAX_VALUE,
-            Spliterator.ORDERED | Spliterator.NONNULL
+                Long.MAX_VALUE,
+                Spliterator.ORDERED | Spliterator.NONNULL
         ) {
             @Override
             public boolean tryAdvance(Consumer<? super Message> action) {
@@ -167,9 +167,9 @@ public final class StreamingQuery implements AutoCloseable {
         } finally {
             reading.set(false);
             pendingControlResponses.values().forEach(future ->
-                future.completeExceptionally(
-                    new CLIConnectionException("Connection closed before response")
-                )
+                    future.completeExceptionally(
+                            new CLIConnectionException("Connection closed before response")
+                    )
             );
             pendingControlResponses.clear();
         }
@@ -186,8 +186,8 @@ public final class StreamingQuery implements AutoCloseable {
         }
 
         String type = Optional.ofNullable(root.get("type"))
-            .map(JsonNode::asText)
-            .orElse("");
+                .map(JsonNode::asText)
+                .orElse("");
 
         switch (type) {
             case "control_request":
@@ -216,8 +216,8 @@ public final class StreamingQuery implements AutoCloseable {
             return;
         }
         String requestId = Optional.ofNullable(responseNode.get("request_id"))
-            .map(JsonNode::asText)
-            .orElse(null);
+                .map(JsonNode::asText)
+                .orElse(null);
         if (requestId == null) {
             return;
         }
@@ -228,12 +228,12 @@ public final class StreamingQuery implements AutoCloseable {
         }
 
         String subtype = Optional.ofNullable(responseNode.get("subtype"))
-            .map(JsonNode::asText)
-            .orElse("");
+                .map(JsonNode::asText)
+                .orElse("");
         if ("error".equals(subtype)) {
             String errorMessage = Optional.ofNullable(responseNode.get("error"))
-                .map(JsonNode::asText)
-                .orElse("Unknown control error");
+                    .map(JsonNode::asText)
+                    .orElse("Unknown control error");
             pending.completeExceptionally(new CLIConnectionException(errorMessage));
         } else {
             pending.complete(responseNode);
@@ -246,11 +246,11 @@ public final class StreamingQuery implements AutoCloseable {
             return;
         }
         String requestId = Optional.ofNullable(node.get("request_id"))
-            .map(JsonNode::asText)
-            .orElse(UUID.randomUUID().toString());
+                .map(JsonNode::asText)
+                .orElse(UUID.randomUUID().toString());
         String subtype = Optional.ofNullable(requestNode.get("subtype"))
-            .map(JsonNode::asText)
-            .orElse("");
+                .map(JsonNode::asText)
+                .orElse("");
 
         try {
             switch (subtype) {
@@ -280,16 +280,16 @@ public final class StreamingQuery implements AutoCloseable {
         }
 
         String toolName = Optional.ofNullable(requestNode.get("tool_name"))
-            .map(JsonNode::asText)
-            .orElse("");
+                .map(JsonNode::asText)
+                .orElse("");
         JsonNode inputNode = requestNode.get("input");
         Map<String, Object> toolInput = mapper.convertValue(
-            inputNode,
-            mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
+                inputNode,
+                mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
         );
 
         List<Map<String, Object>> suggestions = extractSuggestions(
-            requestNode.get("permission_suggestions")
+                requestNode.get("permission_suggestions")
         );
         PermissionContext context = new PermissionContext(null, suggestions);
 
@@ -327,15 +327,15 @@ public final class StreamingQuery implements AutoCloseable {
             sendControlSuccess(requestId, response);
         } else {
             throw new IllegalStateException(
-                "Permission callback must return PermissionResult.Allow or PermissionResult.Deny"
+                    "Permission callback must return PermissionResult.Allow or PermissionResult.Deny"
             );
         }
     }
 
     private void handleHookCallback(String requestId, JsonNode requestNode) {
         String callbackId = Optional.ofNullable(requestNode.get("callback_id"))
-            .map(JsonNode::asText)
-            .orElse("");
+                .map(JsonNode::asText)
+                .orElse("");
         Hook hook = hookCallbacks.get(callbackId);
         if (hook == null) {
             sendControlError(requestId, "Unknown hook callback: " + callbackId);
@@ -343,12 +343,12 @@ public final class StreamingQuery implements AutoCloseable {
         }
 
         Map<String, Object> input = mapper.convertValue(
-            requestNode.get("input"),
-            mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
+                requestNode.get("input"),
+                mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
         );
         String toolUseId = Optional.ofNullable(requestNode.get("tool_use_id"))
-            .map(JsonNode::asText)
-            .orElse(null);
+                .map(JsonNode::asText)
+                .orElse(null);
 
         Map<String, Object> hookOutput;
         try {
@@ -366,8 +366,8 @@ public final class StreamingQuery implements AutoCloseable {
         List<Map<String, Object>> suggestions = new ArrayList<>();
         for (JsonNode node : suggestionsNode) {
             Map<String, Object> suggestion = mapper.convertValue(
-                node,
-                mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
+                    node,
+                    mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class)
             );
             suggestions.add(suggestion);
         }

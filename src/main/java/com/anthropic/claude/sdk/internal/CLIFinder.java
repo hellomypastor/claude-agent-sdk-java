@@ -42,14 +42,14 @@ public class CLIFinder {
 
         // Not found - throw exception with helpful message
         throw new CLINotFoundException(
-            "Claude Code CLI not found. Install with:\n" +
-            "  npm install -g @anthropic-ai/claude-code\n" +
-            "\n" +
-            "If already installed locally, try:\n" +
-            "  export PATH=\"$HOME/node_modules/.bin:$PATH\"\n" +
-            "\n" +
-            "Or provide the path via ClaudeAgentOptions:\n" +
-            "  ClaudeAgentOptions.builder().cliPath(Path.of(\"/path/to/claude\")).build()"
+                "Claude Code CLI not found. Install with:\n" +
+                        "  npm install -g @anthropic-ai/claude-code\n" +
+                        "\n" +
+                        "If already installed locally, try:\n" +
+                        "  export PATH=\"$HOME/node_modules/.bin:$PATH\"\n" +
+                        "\n" +
+                        "Or provide the path via ClaudeAgentOptions:\n" +
+                        "  ClaudeAgentOptions.builder().cliPath(Path.of(\"/path/to/claude\")).build()"
         );
     }
 

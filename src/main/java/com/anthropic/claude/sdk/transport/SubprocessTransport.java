@@ -54,8 +54,8 @@ public class SubprocessTransport implements Transport {
         this.streamingMode = streamingMode;
         this.options = options;
         this.cliPath = options.getCliPath() != null
-            ? options.getCliPath().toString()
-            : CLIFinder.findCLI();
+                ? options.getCliPath().toString()
+                : CLIFinder.findCLI();
         this.objectMapper = new ObjectMapper();
         this.executor = Executors.newCachedThreadPool();
         this.ready = false;
@@ -90,15 +90,15 @@ public class SubprocessTransport implements Transport {
 
                 // Setup I/O streams
                 stdoutReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream())
+                        new InputStreamReader(process.getInputStream())
                 );
 
                 stdinWriter = new BufferedWriter(
-                    new OutputStreamWriter(process.getOutputStream())
+                        new OutputStreamWriter(process.getOutputStream())
                 );
 
                 stderrReader = new BufferedReader(
-                    new InputStreamReader(process.getErrorStream())
+                        new InputStreamReader(process.getErrorStream())
                 );
 
                 // Start stderr reader in background
@@ -266,9 +266,9 @@ public class SubprocessTransport implements Transport {
         if (!options.getSettingSources().isEmpty()) {
             cmd.add("--setting-sources");
             cmd.add(options.getSettingSources().stream()
-                .map(SettingSource::getValue)
-                .reduce((a, b) -> a + "," + b)
-                .orElse(""));
+                    .map(SettingSource::getValue)
+                    .reduce((a, b) -> a + "," + b)
+                    .orElse(""));
         }
 
         // Max thinking tokens

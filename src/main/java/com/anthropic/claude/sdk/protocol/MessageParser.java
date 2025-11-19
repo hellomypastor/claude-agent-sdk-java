@@ -46,8 +46,8 @@ public class MessageParser {
                     return parseStreamEvent(root);
                 default:
                     throw new MessageParseException(
-                        "Unknown message type: " + type,
-                        jsonLine
+                            "Unknown message type: " + type,
+                            jsonLine
                     );
             }
 
@@ -68,8 +68,8 @@ public class MessageParser {
         }
 
         String parentToolUseId = root.has("parent_tool_use_id")
-            ? root.get("parent_tool_use_id").asText()
-            : null;
+                ? root.get("parent_tool_use_id").asText()
+                : null;
 
         return new UserMessage(content, parentToolUseId);
     }
@@ -85,8 +85,8 @@ public class MessageParser {
 
         String model = messageNode.get("model").asText();
         String parentToolUseId = root.has("parent_tool_use_id")
-            ? root.get("parent_tool_use_id").asText()
-            : null;
+                ? root.get("parent_tool_use_id").asText()
+                : null;
 
         return new AssistantMessage(content, model, parentToolUseId);
     }
@@ -94,12 +94,12 @@ public class MessageParser {
     private SystemMessage parseSystemMessage(JsonNode root) {
         String subtype = root.get("subtype").asText();
         Map<String, Object> data = objectMapper.convertValue(
-            root,
-            objectMapper.getTypeFactory().constructMapType(
-                HashMap.class,
-                String.class,
-                Object.class
-            )
+                root,
+                objectMapper.getTypeFactory().constructMapType(
+                        HashMap.class,
+                        String.class,
+                        Object.class
+                )
         );
 
         return new SystemMessage(subtype, data);
@@ -113,36 +113,36 @@ public class MessageParser {
         String sessionId = root.get("session_id").asText();
 
         Double totalCostUsd = root.has("total_cost_usd")
-            ? root.get("total_cost_usd").asDouble()
-            : null;
+                ? root.get("total_cost_usd").asDouble()
+                : null;
 
         Map<String, Object> usage = root.has("usage")
-            ? objectMapper.convertValue(
+                ? objectMapper.convertValue(
                 root.get("usage"),
                 objectMapper.getTypeFactory().constructMapType(
-                    HashMap.class,
-                    String.class,
-                    Object.class
+                        HashMap.class,
+                        String.class,
+                        Object.class
                 )
-            )
-            : null;
+        )
+                : null;
 
         Object result = root.has("result")
-            ? objectMapper.convertValue(root.get("result"), Object.class)
-            : null;
+                ? objectMapper.convertValue(root.get("result"), Object.class)
+                : null;
 
         String subtype = root.get("subtype").asText();
 
         return new ResultMessage(
-            subtype,
-            durationMs,
-            durationApiMs,
-            isError,
-            numTurns,
-            sessionId,
-            totalCostUsd,
-            usage,
-            result
+                subtype,
+                durationMs,
+                durationApiMs,
+                isError,
+                numTurns,
+                sessionId,
+                totalCostUsd,
+                usage,
+                result
         );
     }
 
@@ -154,22 +154,22 @@ public class MessageParser {
                 return new TextBlock(blockNode.get("text").asText());
             case "thinking":
                 return new ThinkingBlock(
-                    blockNode.get("thinking").asText(),
-                    blockNode.get("signature").asText()
+                        blockNode.get("thinking").asText(),
+                        blockNode.get("signature").asText()
                 );
             case "tool_use": {
                 Map<String, Object> input = objectMapper.convertValue(
-                    blockNode.get("input"),
-                    objectMapper.getTypeFactory().constructMapType(
-                        HashMap.class,
-                        String.class,
-                        Object.class
-                    )
+                        blockNode.get("input"),
+                        objectMapper.getTypeFactory().constructMapType(
+                                HashMap.class,
+                                String.class,
+                                Object.class
+                        )
                 );
                 return new ToolUseBlock(
-                    blockNode.get("id").asText(),
-                    blockNode.get("name").asText(),
-                    input
+                        blockNode.get("id").asText(),
+                        blockNode.get("name").asText(),
+                        input
                 );
             }
             case "tool_result": {
@@ -179,11 +179,11 @@ public class MessageParser {
                     if (contentNode.isArray()) {
                         // Content is an array
                         content = objectMapper.convertValue(
-                            contentNode,
-                            objectMapper.getTypeFactory().constructCollectionType(
-                                ArrayList.class,
-                                Object.class
-                            )
+                                contentNode,
+                                objectMapper.getTypeFactory().constructCollectionType(
+                                        ArrayList.class,
+                                        Object.class
+                                )
                         );
                     } else if (contentNode.isTextual()) {
                         // Content is a string - wrap it in a list
@@ -192,12 +192,12 @@ public class MessageParser {
                     }
                 }
                 Boolean isError = blockNode.has("is_error")
-                    ? blockNode.get("is_error").asBoolean()
-                    : null;
+                        ? blockNode.get("is_error").asBoolean()
+                        : null;
                 return new ToolResultBlock(
-                    blockNode.get("tool_use_id").asText(),
-                    content,
-                    isError
+                        blockNode.get("tool_use_id").asText(),
+                        content,
+                        isError
                 );
             }
             default:
@@ -210,19 +210,19 @@ public class MessageParser {
         String sessionId = root.get("session_id").asText();
 
         Map<String, Object> event = root.has("event") && !root.get("event").isNull()
-            ? objectMapper.convertValue(
+                ? objectMapper.convertValue(
                 root.get("event"),
                 objectMapper.getTypeFactory().constructMapType(
-                    HashMap.class,
-                    String.class,
-                    Object.class
+                        HashMap.class,
+                        String.class,
+                        Object.class
                 )
-            )
-            : null;
+        )
+                : null;
 
         String parentToolUseId = root.has("parent_tool_use_id")
-            ? root.get("parent_tool_use_id").asText()
-            : null;
+                ? root.get("parent_tool_use_id").asText()
+                : null;
 
         return new StreamEvent(uuid, sessionId, event, parentToolUseId);
     }

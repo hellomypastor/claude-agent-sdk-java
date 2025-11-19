@@ -8,9 +8,9 @@ import java.util.stream.Stream;
 
 /**
  * Main entry point for Claude Agent SDK.
- *
+ * <p>
  * Provides static methods for simple one-shot queries to Claude Code.
- *
+ * <p>
  * Example:
  * <pre>{@code
  * // Simple query
@@ -43,7 +43,7 @@ public class ClaudeAgentSdk {
     /**
      * Query Claude with a prompt and custom options.
      *
-     * @param prompt The prompt to send to Claude
+     * @param prompt  The prompt to send to Claude
      * @param options Custom options for the query
      * @return Stream of messages from Claude
      */

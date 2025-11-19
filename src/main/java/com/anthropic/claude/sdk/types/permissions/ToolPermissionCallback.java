@@ -13,14 +13,14 @@ public interface ToolPermissionCallback {
     /**
      * Decide whether a tool can be used.
      *
-     * @param toolName The name of the tool being requested
+     * @param toolName  The name of the tool being requested
      * @param toolInput The input parameters for the tool
-     * @param context Additional context (suggestions, signals, etc.)
+     * @param context   Additional context (suggestions, signals, etc.)
      * @return Permission result (allow or deny)
      */
     CompletableFuture<PermissionResult> canUseTool(
-        String toolName,
-        Map<String, Object> toolInput,
-        PermissionContext context
+            String toolName,
+            Map<String, Object> toolInput,
+            PermissionContext context
     );
 }

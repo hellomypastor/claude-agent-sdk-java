@@ -9,14 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Quick start examples for Claude Agent SDK for Java.
- *
+ * <p>
  * This file mirrors the Python SDK's quick_start.py example, demonstrating:
  * 1. Basic query - simple question
  * 2. Query with options - custom system prompt and max turns
  * 3. Query with tools - file operations
- *
+ * <p>
  * Usage:
- *   java QuickStart
+ * java QuickStart
  */
 @Slf4j
 public class QuickStart {
@@ -42,17 +42,17 @@ public class QuickStart {
         log.info("=== Basic Example ===");
 
         ClaudeAgentSdk.query("What is 2 + 2?")
-            .forEach(message -> {
-                if (message instanceof AssistantMessage) {
-                    AssistantMessage assistantMsg = (AssistantMessage) message;
-                    assistantMsg.getContent().forEach(block -> {
-                        if (block instanceof TextBlock) {
-                            TextBlock textBlock = (TextBlock) block;
-                            log.info("Claude: {}", textBlock.getText());
-                        }
-                    });
-                }
-            });
+                .forEach(message -> {
+                    if (message instanceof AssistantMessage) {
+                        AssistantMessage assistantMsg = (AssistantMessage) message;
+                        assistantMsg.getContent().forEach(block -> {
+                            if (block instanceof TextBlock) {
+                                TextBlock textBlock = (TextBlock) block;
+                                log.info("Claude: {}", textBlock.getText());
+                            }
+                        });
+                    }
+                });
     }
 
     /**
@@ -62,22 +62,22 @@ public class QuickStart {
         log.info("=== With Options Example ===");
 
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-            .systemPrompt("You are a helpful assistant that explains things simply.")
-            .maxTurns(1)
-            .build();
+                .systemPrompt("You are a helpful assistant that explains things simply.")
+                .maxTurns(1)
+                .build();
 
         ClaudeAgentSdk.query("Explain what Python is in one sentence.", options)
-            .forEach(message -> {
-                if (message instanceof AssistantMessage) {
-                    AssistantMessage assistantMsg = (AssistantMessage) message;
-                    assistantMsg.getContent().forEach(block -> {
-                        if (block instanceof TextBlock) {
-                            TextBlock textBlock = (TextBlock) block;
-                            log.info("Claude: {}", textBlock.getText());
-                        }
-                    });
-                }
-            });
+                .forEach(message -> {
+                    if (message instanceof AssistantMessage) {
+                        AssistantMessage assistantMsg = (AssistantMessage) message;
+                        assistantMsg.getContent().forEach(block -> {
+                            if (block instanceof TextBlock) {
+                                TextBlock textBlock = (TextBlock) block;
+                                log.info("Claude: {}", textBlock.getText());
+                            }
+                        });
+                    }
+                });
     }
 
     /**
@@ -87,14 +87,14 @@ public class QuickStart {
         log.info("=== With Tools Example ===");
 
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-            .allowedTool("Read")
-            .allowedTool("Write")
-            .systemPrompt("You are a helpful file assistant.")
-            .build();
+                .allowedTool("Read")
+                .allowedTool("Write")
+                .systemPrompt("You are a helpful file assistant.")
+                .build();
 
         ClaudeAgentSdk.query(
-            "Create a file called hello.txt with 'Hello, World!' in it",
-            options
+                "Create a file called hello.txt with 'Hello, World!' in it",
+                options
         ).forEach(message -> {
             if (message instanceof AssistantMessage) {
                 AssistantMessage assistantMsg = (AssistantMessage) message;

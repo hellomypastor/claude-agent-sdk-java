@@ -1,6 +1,7 @@
 # Claude Agent SDK for Java - Examples
 
-This directory contains examples demonstrating various features of the Claude Agent SDK for Java. These examples mirror the Python SDK examples while leveraging Java's type safety and language features.
+This directory contains examples demonstrating various features of the Claude Agent SDK for Java. These examples mirror
+the Python SDK examples while leveraging Java's type safety and language features.
 
 ## Prerequisites
 
@@ -46,6 +47,7 @@ java -cp .:../target/claude-agent-sdk-0.1.0.jar BudgetExample
 **Python equivalent**: `quick_start.py`
 
 Demonstrates the basics of using the SDK:
+
 - Simple query
 - Query with custom options (system prompt, max turns)
 - Query with tools (Read, Write)
@@ -56,6 +58,7 @@ ClaudeAgentSdk.query("What is 2 + 2?")
 ```
 
 **Key concepts**:
+
 - Static `query()` method for one-shot queries
 - `ClaudeAgentOptions.Builder` for configuration
 - Processing `AssistantMessage` and `ResultMessage`
@@ -67,6 +70,7 @@ ClaudeAgentSdk.query("What is 2 + 2?")
 **Python equivalent**: `hooks.py`
 
 Demonstrates the hooks system for deterministic processing:
+
 - **PreToolUse**: Block dangerous bash commands
 - **PostToolUse**: Review tool output and add context
 - **Strict Approval**: Control write operations
@@ -82,12 +86,14 @@ Hook checkBashCommand = (input, toolUseId, context) -> {
 ```
 
 **Key concepts**:
+
 - `Hook` functional interface
 - `HookMatcher` for targeting specific tools
 - Permission decisions (allow/deny)
 - Adding system messages and context
 
 **Run examples**:
+
 ```bash
 java HooksExample
 ```
@@ -99,6 +105,7 @@ java HooksExample
 **Python equivalent**: `tool_permission_callback.py`
 
 Demonstrates tool permission callbacks for fine-grained control:
+
 - Allow/deny tools based on type
 - Modify tool inputs for safety (e.g., redirect file paths)
 - Log all tool usage
@@ -108,22 +115,24 @@ Demonstrates tool permission callbacks for fine-grained control:
 ToolPermissionCallback callback = (toolName, input, context) -> {
     if (toolName.equals("Bash") && command.contains("rm -rf")) {
         return CompletableFuture.completedFuture(
-            PermissionResult.deny("Dangerous command")
+                PermissionResult.deny("Dangerous command")
         );
     }
     return CompletableFuture.completedFuture(
-        PermissionResult.allow()
+            PermissionResult.allow()
     );
 };
 ```
 
 **Key concepts**:
+
 - `ToolPermissionCallback` functional interface
 - `PermissionResult.allow()` and `PermissionResult.deny()`
 - Modifying inputs with `allow(updatedInput)`
 - Tracking tool usage
 
 **Features demonstrated**:
+
 - ✅ Auto-allow read-only tools (Read, Glob, Grep)
 - ❌ Block writes to system directories (/etc/, /usr/)
 - ⚠️ Redirect writes to safe locations
@@ -136,6 +145,7 @@ ToolPermissionCallback callback = (toolName, input, context) -> {
 **Python equivalent**: `system_prompt.py`
 
 Demonstrates different system prompt configurations:
+
 - No system prompt (vanilla Claude)
 - Custom string prompts
 - Specialized assistants (Pirate, Shakespeare)
@@ -149,11 +159,13 @@ ClaudeAgentSdk.query("What is 2 + 2?", options);
 ```
 
 **Key concepts**:
+
 - Customizing Claude's behavior with system prompts
 - Different personalities and response styles
 - Math tutor example with step-by-step explanations
 
 **Examples included**:
+
 1. **Vanilla Claude** - Default behavior
 2. **Math Tutor** - Step-by-step explanations
 3. **Pirate Assistant** - Arr, matey!
@@ -166,6 +178,7 @@ ClaudeAgentSdk.query("What is 2 + 2?", options);
 **Python equivalent**: `max_budget_usd.py`
 
 Demonstrates budget control to prevent unexpected API costs:
+
 - No budget limit
 - Reasonable budget ($0.10)
 - Tight budget ($0.0001) that gets exceeded
@@ -177,6 +190,7 @@ ClaudeAgentOptions options = ClaudeAgentOptions.builder()
 ```
 
 **Key concepts**:
+
 - Setting budget limits with `maxBudgetUsd()`
 - Handling budget exceeded errors
 - Monitoring actual costs via `ResultMessage.totalCostUsd()`
@@ -187,14 +201,14 @@ ClaudeAgentOptions options = ClaudeAgentOptions.builder()
 
 ## Comparison with Python Examples
 
-| Feature | Python SDK | Java SDK | Notes |
-|---------|-----------|----------|-------|
-| Simple queries | `query()` | `ClaudeAgentSdk.query()` | Same API |
-| Async/await | `async`/`await` | `CompletableFuture` | Java async |
-| Hooks | Dict callbacks | Functional interfaces | Type-safe |
-| Pattern matching | `isinstance()` | `instanceof` pattern | Java 17+ |
-| Options | Keyword args | Builder pattern | More explicit |
-| Streaming | `async for` | `Stream` API | Lazy evaluation |
+| Feature          | Python SDK      | Java SDK                 | Notes           |
+|------------------|-----------------|--------------------------|-----------------|
+| Simple queries   | `query()`       | `ClaudeAgentSdk.query()` | Same API        |
+| Async/await      | `async`/`await` | `CompletableFuture`      | Java async      |
+| Hooks            | Dict callbacks  | Functional interfaces    | Type-safe       |
+| Pattern matching | `isinstance()`  | `instanceof` pattern     | Java 17+        |
+| Options          | Keyword args    | Builder pattern          | More explicit   |
+| Streaming        | `async for`     | `Stream` API             | Lazy evaluation |
 
 ## Additional Examples (Not Yet Implemented)
 
@@ -251,9 +265,13 @@ CompletableFuture<Void> pipeline = client.query("Hello")
 
 ```java
 // Automatic cleanup
-try (ClaudeClient client = new ClaudeClient(options)) {
-    client.query("Hello").join();
-    // Client automatically closed
+try(ClaudeClient client = new ClaudeClient(options)){
+        client.
+
+query("Hello").
+
+join();
+// Client automatically closed
 }
 ```
 
@@ -262,20 +280,32 @@ try (ClaudeClient client = new ClaudeClient(options)) {
 All examples include basic error handling. For production use, add comprehensive exception handling:
 
 ```java
-try {
-    ClaudeAgentSdk.query("Hello").forEach(System.out::println);
-} catch (CLINotFoundException e) {
-    System.err.println("Claude Code not installed");
-} catch (CLIConnectionException e) {
-    System.err.println("Failed to connect: " + e.getMessage());
-} catch (ProcessException e) {
-    System.err.println("CLI error (code " + e.getExitCode() + ")");
-}
+try{
+        ClaudeAgentSdk.query("Hello").
+
+forEach(System.out::println);
+}catch(
+CLINotFoundException e){
+        System.err.
+
+println("Claude Code not installed");
+}catch(
+CLIConnectionException e){
+        System.err.
+
+println("Failed to connect: "+e.getMessage());
+        }catch(
+ProcessException e){
+        System.err.
+
+println("CLI error (code "+e.getExitCode() +")");
+        }
 ```
 
 ## Contributing
 
 To add new examples:
+
 1. Create a new `.java` file in this directory
 2. Mirror the corresponding Python example when possible
 3. Add comprehensive comments

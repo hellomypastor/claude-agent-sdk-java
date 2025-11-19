@@ -20,14 +20,14 @@ import java.util.stream.Stream;
 
 /**
  * Hooks Example - Demonstrates using hooks with Claude Agent SDK.
- *
+ * <p>
  * This example shows various hook patterns:
  * - PreToolUse: Block dangerous commands
  * - PostToolUse: Review tool output
  * - UserPromptSubmit: Add custom context
- *
+ * <p>
  * Usage:
- *   java HooksExample
+ * java HooksExample
  */
 @Slf4j
 public class HooksExample {
@@ -75,7 +75,7 @@ public class HooksExample {
                     hookOutput.put("hookEventName", "PreToolUse");
                     hookOutput.put("permissionDecision", "deny");
                     hookOutput.put("permissionDecisionReason",
-                        "Command contains forbidden pattern: " + pattern);
+                            "Command contains forbidden pattern: " + pattern);
                     result.put("hookSpecificOutput", hookOutput);
 
                     return CompletableFuture.completedFuture(result);
@@ -87,13 +87,13 @@ public class HooksExample {
 
         // Configure options with hook
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-            .allowedTool("Bash")
-            .hooks(Map.of(
-                "PreToolUse", List.of(
-                    new HookMatcher("Bash", List.of(checkBashCommand))
-                )
-            ))
-            .build();
+                .allowedTool("Bash")
+                .hooks(Map.of(
+                        "PreToolUse", List.of(
+                                new HookMatcher("Bash", List.of(checkBashCommand))
+                        )
+                ))
+                .build();
 
         try (ClaudeSDKClient client = new ClaudeSDKClient(options)) {
             client.connect().join();
@@ -136,7 +136,7 @@ public class HooksExample {
                 Map<String, Object> hookOutput = new HashMap<>();
                 hookOutput.put("hookEventName", "PostToolUse");
                 hookOutput.put("additionalContext",
-                    "The command encountered an error. Try a different approach.");
+                        "The command encountered an error. Try a different approach.");
                 result.put("hookSpecificOutput", hookOutput);
 
                 return CompletableFuture.completedFuture(result);
@@ -146,13 +146,13 @@ public class HooksExample {
         };
 
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-            .allowedTool("Bash")
-            .hooks(Map.of(
-                "PostToolUse", List.of(
-                    new HookMatcher("Bash", List.of(reviewToolOutput))
-                )
-            ))
-            .build();
+                .allowedTool("Bash")
+                .hooks(Map.of(
+                        "PostToolUse", List.of(
+                                new HookMatcher("Bash", List.of(reviewToolOutput))
+                        )
+                ))
+                .build();
 
         try (ClaudeSDKClient client = new ClaudeSDKClient(options)) {
             client.connect().join();
@@ -191,7 +191,7 @@ public class HooksExample {
                     hookOutput.put("hookEventName", "PreToolUse");
                     hookOutput.put("permissionDecision", "deny");
                     hookOutput.put("permissionDecisionReason",
-                        "Files with 'important' in name are protected");
+                            "Files with 'important' in name are protected");
                     result.put("hookSpecificOutput", hookOutput);
 
                     return CompletableFuture.completedFuture(result);
@@ -212,14 +212,14 @@ public class HooksExample {
         };
 
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-            .allowedTool("Write")
-            .allowedTool("Bash")
-            .hooks(Map.of(
-                "PreToolUse", List.of(
-                    new HookMatcher("Write", List.of(strictApproval))
-                )
-            ))
-            .build();
+                .allowedTool("Write")
+                .allowedTool("Bash")
+                .hooks(Map.of(
+                        "PreToolUse", List.of(
+                                new HookMatcher("Write", List.of(strictApproval))
+                        )
+                ))
+                .build();
 
         try (ClaudeSDKClient client = new ClaudeSDKClient(options)) {
             client.connect().join();

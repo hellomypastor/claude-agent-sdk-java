@@ -19,15 +19,15 @@ import java.util.stream.Stream;
 
 /**
  * Tool Permission Callback Example.
- *
+ * <p>
  * Demonstrates how to use tool permission callbacks to:
  * 1. Allow/deny tools based on type
  * 2. Modify tool inputs for safety
  * 3. Log tool usage
  * 4. Block dangerous commands
- *
+ * <p>
  * Usage:
- *   java ToolPermissionExample
+ * java ToolPermissionExample
  */
 @Slf4j
 public class ToolPermissionExample {
@@ -76,7 +76,7 @@ public class ToolPermissionExample {
                     if (filePath.startsWith("/etc/") || filePath.startsWith("/usr/")) {
                         log.warn("   ❌ Denying write to system directory: {}", filePath);
                         return CompletableFuture.completedFuture(
-                            PermissionResult.deny("Cannot write to system directory: " + filePath)
+                                PermissionResult.deny("Cannot write to system directory: " + filePath)
                         );
                     }
 
@@ -90,7 +90,7 @@ public class ToolPermissionExample {
                         modifiedInput.put("file_path", safePath);
 
                         return CompletableFuture.completedFuture(
-                            PermissionResult.allow(modifiedInput)
+                                PermissionResult.allow(modifiedInput)
                         );
                     }
                 }
@@ -105,7 +105,7 @@ public class ToolPermissionExample {
                     if (command != null && command.contains(dangerous)) {
                         log.warn("   ❌ Denying dangerous command: {}", command);
                         return CompletableFuture.completedFuture(
-                            PermissionResult.deny("Dangerous command pattern detected: " + dangerous)
+                                PermissionResult.deny("Dangerous command pattern detected: " + dangerous)
                         );
                     }
                 }
@@ -121,8 +121,8 @@ public class ToolPermissionExample {
 
         // Configure options with our callback
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-            .canUseTool(permissionCallback)
-            .build();
+                .canUseTool(permissionCallback)
+                .build();
 
         // Create streaming client and send a query
         try (ClaudeSDKClient client = new ClaudeSDKClient(options)) {
@@ -130,10 +130,10 @@ public class ToolPermissionExample {
             log.info("📝 Sending query to Claude...");
 
             client.query(
-                "Please do the following:\n" +
-                "1. List the files in the current directory\n" +
-                "2. Create a simple Python hello world script at hello.py\n" +
-                "3. Run the script to test it"
+                    "Please do the following:\n" +
+                            "1. List the files in the current directory\n" +
+                            "2. Create a simple Python hello world script at hello.py\n" +
+                            "3. Run the script to test it"
             ).join();
 
             log.info("📨 Receiving response...");

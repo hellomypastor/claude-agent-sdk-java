@@ -9,14 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Budget Control Example - Demonstrates max_budget_usd option.
- *
+ * <p>
  * This example shows how to:
  * 1. Run queries without budget limits
  * 2. Set reasonable budget limits
  * 3. Handle budget exceeded scenarios
- *
+ * <p>
  * Usage:
- *   java BudgetExample
+ * java BudgetExample
  */
 @Slf4j
 public class BudgetExample {
@@ -42,23 +42,23 @@ public class BudgetExample {
         log.info("=== Without Budget Limit ===");
 
         ClaudeAgentSdk.query("What is 2 + 2?")
-            .forEach(message -> {
-                if (message instanceof AssistantMessage) {
-                    AssistantMessage assistantMsg = (AssistantMessage) message;
-                    assistantMsg.getContent().forEach(block -> {
-                        if (block instanceof TextBlock) {
-                            TextBlock textBlock = (TextBlock) block;
-                            log.info("Claude: {}", textBlock.getText());
+                .forEach(message -> {
+                    if (message instanceof AssistantMessage) {
+                        AssistantMessage assistantMsg = (AssistantMessage) message;
+                        assistantMsg.getContent().forEach(block -> {
+                            if (block instanceof TextBlock) {
+                                TextBlock textBlock = (TextBlock) block;
+                                log.info("Claude: {}", textBlock.getText());
+                            }
+                        });
+                    } else if (message instanceof ResultMessage) {
+                        ResultMessage resultMsg = (ResultMessage) message;
+                        if (resultMsg.getTotalCostUsd() != null) {
+                            log.info("Total cost: ${}", String.format("%.4f", resultMsg.getTotalCostUsd()));
                         }
-                    });
-                } else if (message instanceof ResultMessage) {
-                    ResultMessage resultMsg = (ResultMessage) message;
-                    if (resultMsg.getTotalCostUsd() != null) {
-                        log.info("Total cost: ${}", String.format("%.4f", resultMsg.getTotalCostUsd()));
+                        log.info("Status: {}", resultMsg.getSubtype());
                     }
-                    log.info("Status: {}", resultMsg.getSubtype());
-                }
-            });
+                });
     }
 
     /**
@@ -68,27 +68,27 @@ public class BudgetExample {
         log.info("=== With Reasonable Budget ($0.10) ===");
 
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-            .maxBudgetUsd(0.10)  // 10 cents - plenty for a simple query
-            .build();
+                .maxBudgetUsd(0.10)  // 10 cents - plenty for a simple query
+                .build();
 
         ClaudeAgentSdk.query("What is 2 + 2?", options)
-            .forEach(message -> {
-                if (message instanceof AssistantMessage) {
-                    AssistantMessage assistantMsg = (AssistantMessage) message;
-                    assistantMsg.getContent().forEach(block -> {
-                        if (block instanceof TextBlock) {
-                            TextBlock textBlock = (TextBlock) block;
-                            log.info("Claude: {}", textBlock.getText());
+                .forEach(message -> {
+                    if (message instanceof AssistantMessage) {
+                        AssistantMessage assistantMsg = (AssistantMessage) message;
+                        assistantMsg.getContent().forEach(block -> {
+                            if (block instanceof TextBlock) {
+                                TextBlock textBlock = (TextBlock) block;
+                                log.info("Claude: {}", textBlock.getText());
+                            }
+                        });
+                    } else if (message instanceof ResultMessage) {
+                        ResultMessage resultMsg = (ResultMessage) message;
+                        if (resultMsg.getTotalCostUsd() != null) {
+                            log.info("Total cost: ${}", String.format("%.4f", resultMsg.getTotalCostUsd()));
                         }
-                    });
-                } else if (message instanceof ResultMessage) {
-                    ResultMessage resultMsg = (ResultMessage) message;
-                    if (resultMsg.getTotalCostUsd() != null) {
-                        log.info("Total cost: ${}", String.format("%.4f", resultMsg.getTotalCostUsd()));
+                        log.info("Status: {}", resultMsg.getSubtype());
                     }
-                    log.info("Status: {}", resultMsg.getSubtype());
-                }
-            });
+                });
     }
 
     /**
@@ -99,33 +99,33 @@ public class BudgetExample {
         log.info("=== With Tight Budget ($0.0001) ===");
 
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-            .maxBudgetUsd(0.0001)  // Very small budget - will be exceeded quickly
-            .allowedTool("Read")  // Allow Read tool to make the query more expensive
-            .build();
+                .maxBudgetUsd(0.0001)  // Very small budget - will be exceeded quickly
+                .allowedTool("Read")  // Allow Read tool to make the query more expensive
+                .build();
 
         ClaudeAgentSdk.query("Read the README.md file and summarize it", options)
-            .forEach(message -> {
-                if (message instanceof AssistantMessage) {
-                    AssistantMessage assistantMsg = (AssistantMessage) message;
-                    assistantMsg.getContent().forEach(block -> {
-                        if (block instanceof TextBlock) {
-                            TextBlock textBlock = (TextBlock) block;
-                            log.info("Claude: {}", textBlock.getText());
+                .forEach(message -> {
+                    if (message instanceof AssistantMessage) {
+                        AssistantMessage assistantMsg = (AssistantMessage) message;
+                        assistantMsg.getContent().forEach(block -> {
+                            if (block instanceof TextBlock) {
+                                TextBlock textBlock = (TextBlock) block;
+                                log.info("Claude: {}", textBlock.getText());
+                            }
+                        });
+                    } else if (message instanceof ResultMessage) {
+                        ResultMessage resultMsg = (ResultMessage) message;
+                        if (resultMsg.getTotalCostUsd() != null) {
+                            log.info("Total cost: ${}", String.format("%.4f", resultMsg.getTotalCostUsd()));
                         }
-                    });
-                } else if (message instanceof ResultMessage) {
-                    ResultMessage resultMsg = (ResultMessage) message;
-                    if (resultMsg.getTotalCostUsd() != null) {
-                        log.info("Total cost: ${}", String.format("%.4f", resultMsg.getTotalCostUsd()));
-                    }
-                    log.info("Status: {}", resultMsg.getSubtype());
+                        log.info("Status: {}", resultMsg.getSubtype());
 
-                    // Check if budget was exceeded
-                    if ("error_max_budget_usd".equals(resultMsg.getSubtype())) {
-                        log.warn("⚠️  Budget limit exceeded!");
-                        log.warn("Note: The cost may exceed the budget by up to one API call's worth");
+                        // Check if budget was exceeded
+                        if ("error_max_budget_usd".equals(resultMsg.getSubtype())) {
+                            log.warn("⚠️  Budget limit exceeded!");
+                            log.warn("Note: The cost may exceed the budget by up to one API call's worth");
+                        }
                     }
-                }
-            });
+                });
     }
 }

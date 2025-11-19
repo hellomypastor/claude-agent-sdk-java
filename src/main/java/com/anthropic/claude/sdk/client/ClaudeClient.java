@@ -14,10 +14,10 @@ import java.util.stream.Stream;
 
 /**
  * Claude Agent SDK Client for bidirectional sessions.
- *
+ * <p>
  * This client provides full interactive conversation capabilities with Claude Code,
  * supporting hooks, tool permissions, and MCP servers.
- *
+ * <p>
  * Example:
  * <pre>{@code
  * ClaudeAgentOptions options = ClaudeAgentOptions.builder()
@@ -67,12 +67,12 @@ public class ClaudeClient implements Closeable {
     public CompletableFuture<Stream<Message>> query(String prompt) {
         if (options.getCanUseTool() != null) {
             throw new IllegalArgumentException(
-                "Tool permission callbacks require streaming mode. Use ClaudeSDKClient for interactive sessions."
+                    "Tool permission callbacks require streaming mode. Use ClaudeSDKClient for interactive sessions."
             );
         }
         if (options.getHooks() != null && !options.getHooks().isEmpty()) {
             throw new IllegalArgumentException(
-                "Hooks require streaming mode. Use ClaudeSDKClient for interactive sessions."
+                    "Hooks require streaming mode. Use ClaudeSDKClient for interactive sessions."
             );
         }
 
@@ -100,16 +100,16 @@ public class ClaudeClient implements Closeable {
         }
 
         return transport.readLines()
-            .map(line -> {
-                try {
-                    logger.debug("Received: {}", line);
-                    return parser.parse(line);
-                } catch (Exception e) {
-                    logger.error("Failed to parse message: {}", line, e);
-                    return null;
-                }
-            })
-            .filter(msg -> msg != null);
+                .map(line -> {
+                    try {
+                        logger.debug("Received: {}", line);
+                        return parser.parse(line);
+                    } catch (Exception e) {
+                        logger.error("Failed to parse message: {}", line, e);
+                        return null;
+                    }
+                })
+                .filter(msg -> msg != null);
     }
 
     @Override

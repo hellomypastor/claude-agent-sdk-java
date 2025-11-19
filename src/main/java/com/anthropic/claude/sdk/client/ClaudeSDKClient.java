@@ -52,17 +52,17 @@ public final class ClaudeSDKClient implements AutoCloseable {
         transport = new SubprocessTransport(effectiveOptions, true);
 
         return transport.connect()
-            .thenCompose(ignored -> {
-                query = new StreamingQuery(
-                    transport,
-                    parser,
-                    originalOptions.getCanUseTool(),
-                    originalOptions.getHooks()
-                );
-                query.start();
-                return query.initialize();
-            })
-            .thenAccept(response -> connected.set(true));
+                .thenCompose(ignored -> {
+                    query = new StreamingQuery(
+                            transport,
+                            parser,
+                            originalOptions.getCanUseTool(),
+                            originalOptions.getHooks()
+                    );
+                    query.start();
+                    return query.initialize();
+                })
+                .thenAccept(response -> connected.set(true));
     }
 
     /**
@@ -120,15 +120,15 @@ public final class ClaudeSDKClient implements AutoCloseable {
         }
 
         if (source.getPermissionPromptToolName() != null
-            && !"stdio".equals(source.getPermissionPromptToolName())) {
+                && !"stdio".equals(source.getPermissionPromptToolName())) {
             throw new IllegalArgumentException(
-                "canUseTool requires permission_prompt_tool_name=\"stdio\" when using streaming mode."
+                    "canUseTool requires permission_prompt_tool_name=\"stdio\" when using streaming mode."
             );
         }
 
         return source.toBuilder()
-            .permissionPromptToolName("stdio")
-            .build();
+                .permissionPromptToolName("stdio")
+                .build();
     }
 
     private void ensureConnected() {
