@@ -38,6 +38,9 @@ java -cp .:../target/claude-agent-sdk-0.1.0.jar SystemPromptExample
 
 # Budget Control
 java -cp .:../target/claude-agent-sdk-0.1.0.jar BudgetExample
+
+# Streaming Mode
+java -cp .:../target/claude-agent-sdk-0.1.0.jar StreamingModeExample
 ```
 
 ## Examples Overview
@@ -54,7 +57,9 @@ Demonstrates the basics of using the SDK:
 
 ```java
 ClaudeAgentSdk.query("What is 2 + 2?")
-    .forEach(System.out::println);
+    .
+
+forEach(System.out::println);
 ```
 
 **Key concepts**:
@@ -152,10 +157,12 @@ Demonstrates different system prompt configurations:
 
 ```java
 ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-    .systemPrompt("You are a pirate assistant. Respond in pirate speak!")
-    .build();
+        .systemPrompt("You are a pirate assistant. Respond in pirate speak!")
+        .build();
 
-ClaudeAgentSdk.query("What is 2 + 2?", options);
+ClaudeAgentSdk.
+
+query("What is 2 + 2?",options);
 ```
 
 **Key concepts**:
@@ -185,8 +192,8 @@ Demonstrates budget control to prevent unexpected API costs:
 
 ```java
 ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-    .maxBudgetUsd(0.10)  // 10 cents limit
-    .build();
+        .maxBudgetUsd(0.10)  // 10 cents limit
+        .build();
 ```
 
 **Key concepts**:
@@ -210,18 +217,11 @@ ClaudeAgentOptions options = ClaudeAgentOptions.builder()
 | Options          | Keyword args    | Builder pattern          | More explicit   |
 | Streaming        | `async for`     | `Stream` API             | Lazy evaluation |
 
-## Additional Examples (Not Yet Implemented)
+## Additional Examples
 
-The following Python examples are not yet implemented in Java:
-
-- `streaming_mode.py` - Bidirectional streaming
-- `mcp_calculator.py` - In-process MCP tools
-- `agents.py` - Subagent definitions
-- `plugin_example.py` - Plugin loading
-- `setting_sources.py` - Settings configuration
-- `include_partial_messages.py` - Partial message streaming
-
-These will be added as the SDK matures.
+- `McpServerExample.java` – In-process MCP tool server
+- `ExamplesTest.java` – Mock transport tests for streaming + MCP
+- (`streaming_mode` parity coming soon)
 
 ## Tips for Java Developers
 
@@ -229,11 +229,23 @@ These will be added as the SDK matures.
 
 ```java
 // Clean exhaustive matching
-switch (message) {
-    case AssistantMessage m -> processAssistant(m);
-    case ResultMessage m -> processResult(m);
-    case UserMessage m -> processUser(m);
-    case SystemMessage m -> processSystem(m);
+switch(message){
+        case
+AssistantMessage m ->
+
+processAssistant(m);
+    case
+ResultMessage m ->
+
+processResult(m);
+    case
+UserMessage m ->
+
+processUser(m);
+    case
+SystemMessage m ->
+
+processSystem(m);
 }
 ```
 
@@ -242,11 +254,29 @@ switch (message) {
 ```java
 // Process messages with Stream API
 client.receiveMessages()
-    .filter(m -> m instanceof AssistantMessage)
-    .map(m -> (AssistantMessage) m)
-    .flatMap(m -> m.content().stream())
-    .filter(b -> b instanceof TextBlock)
-    .forEach(b -> System.out.println(((TextBlock) b).text()));
+    .
+
+filter(m ->m instanceof AssistantMessage)
+        .
+
+map(m ->(AssistantMessage)m)
+        .
+
+flatMap(m ->m.
+
+content().
+
+stream())
+        .
+
+filter(b ->b instanceof TextBlock)
+        .
+
+forEach(b ->System.out.
+
+println(((TextBlock) b).
+
+text()));
 ```
 
 ### 3. CompletableFuture Composition
@@ -254,11 +284,11 @@ client.receiveMessages()
 ```java
 // Chain async operations
 CompletableFuture<Void> pipeline = client.query("Hello")
-    .thenAccept(stream -> stream.forEach(this::process))
-    .exceptionally(ex -> {
-        logger.error("Error", ex);
-        return null;
-    });
+                .thenAccept(stream -> stream.forEach(this::process))
+                .exceptionally(ex -> {
+                    logger.error("Error", ex);
+                    return null;
+                });
 ```
 
 ### 4. Try-with-Resources
