@@ -1,30 +1,13 @@
 package com.anthropic.claude.sdk.types.messages;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 /**
  * Base interface for all SDK message types.
  * Mirrors the TypeScript SDK's SDKMessage union type.
+ * <p>
+ * Dispatching is handled manually by {@link com.anthropic.claude.sdk.protocol.MessageParser},
+ * not via Jackson polymorphic annotations, because multiple subtypes share the same
+ * {@code type} value (e.g. "system", "result") and require secondary dispatch on {@code subtype}.
  */
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "type"
-)
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = UserMessage.class, name = "user"),
-        @JsonSubTypes.Type(value = AssistantMessage.class, name = "assistant"),
-        @JsonSubTypes.Type(value = SystemInitMessage.class, name = "system"),
-        @JsonSubTypes.Type(value = SystemStatusMessage.class, name = "system"),
-        @JsonSubTypes.Type(value = SystemCompactBoundaryMessage.class, name = "system"),
-        @JsonSubTypes.Type(value = SystemHookResponseMessage.class, name = "system"),
-        @JsonSubTypes.Type(value = ResultSuccess.class, name = "result"),
-        @JsonSubTypes.Type(value = ResultError.class, name = "result"),
-        @JsonSubTypes.Type(value = StreamEvent.class, name = "stream_event"),
-        @JsonSubTypes.Type(value = ToolProgressMessage.class, name = "tool_progress"),
-        @JsonSubTypes.Type(value = AuthStatusMessage.class, name = "auth_status")
-})
 public interface Message {
 
     /**

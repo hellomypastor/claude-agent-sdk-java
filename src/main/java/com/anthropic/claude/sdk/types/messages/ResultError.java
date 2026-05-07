@@ -165,4 +165,5 @@ public final class ResultError implements ResultMessage {
     public String getSessionId() {
         return sessionId;
     }
+
 }

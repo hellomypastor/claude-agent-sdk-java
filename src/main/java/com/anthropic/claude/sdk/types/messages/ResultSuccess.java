@@ -76,6 +76,7 @@ public final class ResultSuccess implements ResultMessage {
         return result;
     }
 
+
     @JsonProperty("total_cost_usd")
     public double totalCostUsd() {
         return totalCostUsd;

@@ -119,7 +119,7 @@ public class MessageParser {
         String sessionId = root.has("session_id") ? root.get("session_id").asText() : null;
 
         if ("init".equals(subtype)) {
-            return objectMapper.convertValue(root, SystemInitMessage.class);
+            return parseSystemInitMessage(root, uuid, sessionId);
         } else if ("status".equals(subtype)) {
             String status = root.has("status") ? root.get("status").asText() : null;
             return new SystemStatusMessage(status, uuid, sessionId);
@@ -133,12 +133,64 @@ public class MessageParser {
             }
             return new SystemCompactBoundaryMessage(metadata, uuid, sessionId);
         } else if ("hook_response".equals(subtype)) {
-            return objectMapper.convertValue(root, SystemHookResponseMessage.class);
+            return parseSystemHookResponseMessage(root, uuid, sessionId);
         } else {
             // Fallback: return as a status message with the raw data
             String status = root.has("status") ? root.get("status").asText() : null;
             return new SystemStatusMessage(status, uuid, sessionId);
         }
+    }
+
+    private SystemInitMessage parseSystemInitMessage(JsonNode root, String uuid, String sessionId) {
+        List<String> agents = root.has("agents")
+                ? objectMapper.convertValue(root.get("agents"),
+                objectMapper.getTypeFactory().constructCollectionType(ArrayList.class, String.class))
+                : null;
+        String apiKeySource = root.has("apiKeySource") ? root.get("apiKeySource").asText()
+                : (root.has("api_key_source") ? root.get("api_key_source").asText() : null);
+        List<String> betas = root.has("betas")
+                ? objectMapper.convertValue(root.get("betas"),
+                objectMapper.getTypeFactory().constructCollectionType(ArrayList.class, String.class))
+                : null;
+        String claudeCodeVersion = root.has("claude_code_version") ? root.get("claude_code_version").asText() : null;
+        String cwd = root.has("cwd") ? root.get("cwd").asText() : null;
+        List<String> tools = root.has("tools")
+                ? objectMapper.convertValue(root.get("tools"),
+                objectMapper.getTypeFactory().constructCollectionType(ArrayList.class, String.class))
+                : null;
+        List<SystemInitMessage.McpServerInfo> mcpServers = root.has("mcp_servers")
+                ? objectMapper.convertValue(root.get("mcp_servers"),
+                objectMapper.getTypeFactory().constructCollectionType(ArrayList.class, SystemInitMessage.McpServerInfo.class))
+                : null;
+        String model = root.has("model") ? root.get("model").asText() : null;
+        String permissionMode = root.has("permissionMode") ? root.get("permissionMode").asText()
+                : (root.has("permission_mode") ? root.get("permission_mode").asText() : null);
+        List<String> slashCommands = root.has("slash_commands")
+                ? objectMapper.convertValue(root.get("slash_commands"),
+                objectMapper.getTypeFactory().constructCollectionType(ArrayList.class, String.class))
+                : null;
+        String outputStyle = root.has("output_style") ? root.get("output_style").asText() : null;
+        List<String> skills = root.has("skills")
+                ? objectMapper.convertValue(root.get("skills"),
+                objectMapper.getTypeFactory().constructCollectionType(ArrayList.class, String.class))
+                : null;
+        List<SystemInitMessage.PluginInfo> plugins = root.has("plugins")
+                ? objectMapper.convertValue(root.get("plugins"),
+                objectMapper.getTypeFactory().constructCollectionType(ArrayList.class, SystemInitMessage.PluginInfo.class))
+                : null;
+
+        return new SystemInitMessage(agents, apiKeySource, betas, claudeCodeVersion, cwd,
+                tools, mcpServers, model, permissionMode, slashCommands, outputStyle,
+                skills, plugins, uuid, sessionId);
+    }
+
+    private SystemHookResponseMessage parseSystemHookResponseMessage(JsonNode root, String uuid, String sessionId) {
+        String hookName = root.has("hook_name") ? root.get("hook_name").asText() : null;
+        String hookEvent = root.has("hook_event") ? root.get("hook_event").asText() : null;
+        String stdout = root.has("stdout") ? root.get("stdout").asText() : null;
+        String stderr = root.has("stderr") ? root.get("stderr").asText() : null;
+        Integer exitCode = root.has("exit_code") ? root.get("exit_code").asInt() : null;
+        return new SystemHookResponseMessage(hookName, hookEvent, stdout, stderr, exitCode, uuid, sessionId);
     }
 
     private ResultMessage parseResultMessage(JsonNode root) {
