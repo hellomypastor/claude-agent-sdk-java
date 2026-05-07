@@ -461,7 +461,7 @@ try {
 ## Building from Source
 
 ```bash
-git clone https://github.com/anthropics/claude-agent-sdk-java
+git clone https://github.com/hellymypastor/claude-agent-sdk-java
 cd claude-agent-sdk-java
 
 # Requires Java 17+
@@ -486,7 +486,7 @@ See the [`src/test/java/com/anthropic/claude/sdk/examples/`](src/test/java/com/a
 
 ## License
 
-MIT
+Apache-2.0
 
 ## Related Projects
 
