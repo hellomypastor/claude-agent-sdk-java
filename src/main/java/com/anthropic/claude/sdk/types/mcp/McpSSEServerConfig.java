@@ -1,24 +1,24 @@
-package com.anthropic.claude.sdk.types.options.mcp;
+package com.anthropic.claude.sdk.types.mcp;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Map;
 
 /**
- * MCP HTTP server configuration.
+ * MCP SSE (Server-Sent Events) server configuration.
  * <p>
- * Connects to a remote MCP server via HTTP.
+ * Connects to a remote MCP server via SSE.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record McpHttpServerConfig(
+public record McpSSEServerConfig(
         String type,
         String url,
         Map<String, String> headers
 ) implements McpServerConfig {
 
-    public McpHttpServerConfig {
+    public McpSSEServerConfig {
         if (type == null) {
-            type = "http";
+            type = "sse";
         }
     }
 
@@ -27,7 +27,7 @@ public record McpHttpServerConfig(
     }
 
     public static final class Builder {
-        private String type = "http";
+        private String type = "sse";
         private String url;
         private Map<String, String> headers;
 
@@ -49,8 +49,8 @@ public record McpHttpServerConfig(
             return this;
         }
 
-        public McpHttpServerConfig build() {
-            return new McpHttpServerConfig(type, url, headers);
+        public McpSSEServerConfig build() {
+            return new McpSSEServerConfig(type, url, headers);
         }
     }
 }

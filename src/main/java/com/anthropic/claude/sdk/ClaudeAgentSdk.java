@@ -9,7 +9,7 @@ import com.anthropic.claude.sdk.transport.SubprocessTransport;
 import com.anthropic.claude.sdk.transport.Transport;
 import com.anthropic.claude.sdk.types.messages.Message;
 import com.anthropic.claude.sdk.types.options.ClaudeAgentOptions;
-import com.anthropic.claude.sdk.types.options.mcp.McpSdkServerConfig;
+import com.anthropic.claude.sdk.types.mcp.McpSdkServerConfig;
 import com.anthropic.claude.sdk.types.permissions.ToolPermissionCallback;
 
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.anthropic.claude.sdk.types.options.mcp;
+package com.anthropic.claude.sdk.types.mcp;
 
 /**
  * Base type for MCP server configurations.

@@ -3,7 +3,7 @@ package com.anthropic.claude.sdk.types.options;
 import com.anthropic.claude.sdk.session.SessionStore;
 import com.anthropic.claude.sdk.transport.SpawnProcessFunction;
 import com.anthropic.claude.sdk.types.hooks.HookCallbackMatcher;
-import com.anthropic.claude.sdk.types.options.mcp.McpServerConfig;
+import com.anthropic.claude.sdk.types.mcp.McpServerConfig;
 import com.anthropic.claude.sdk.types.permissions.ToolPermissionCallback;
 
 import java.nio.file.Path;

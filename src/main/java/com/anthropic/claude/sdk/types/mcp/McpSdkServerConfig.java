@@ -1,4 +1,4 @@
-package com.anthropic.claude.sdk.types.options.mcp;
+package com.anthropic.claude.sdk.types.mcp;
 
 import com.anthropic.claude.sdk.mcp.SdkMcpServer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
