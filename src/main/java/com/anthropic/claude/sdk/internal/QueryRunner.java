@@ -6,6 +6,8 @@ import com.anthropic.claude.sdk.transport.SubprocessTransport;
 import com.anthropic.claude.sdk.transport.Transport;
 import com.anthropic.claude.sdk.types.messages.Message;
 import com.anthropic.claude.sdk.types.options.ClaudeAgentOptions;
+import com.anthropic.claude.sdk.types.options.mcp.McpSdkServerConfig;
+import com.anthropic.claude.sdk.types.options.mcp.McpServerConfig;
 import com.anthropic.claude.sdk.types.permissions.ToolPermissionCallback;
 
 import java.util.Collections;
@@ -91,9 +93,9 @@ public final class QueryRunner {
             return servers;
         }
 
-        options.getMcpServers().forEach((name, value) -> {
-            if (value instanceof SdkMcpServer) {
-                servers.put(name, (SdkMcpServer) value);
+        options.getMcpServers().forEach((name, config) -> {
+            if (config instanceof McpSdkServerConfig sdkConfig && sdkConfig.instance() != null) {
+                servers.put(name, sdkConfig.instance());
             }
         });
         return servers;

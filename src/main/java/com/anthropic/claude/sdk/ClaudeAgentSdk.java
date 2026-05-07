@@ -9,6 +9,7 @@ import com.anthropic.claude.sdk.transport.SubprocessTransport;
 import com.anthropic.claude.sdk.transport.Transport;
 import com.anthropic.claude.sdk.types.messages.Message;
 import com.anthropic.claude.sdk.types.options.ClaudeAgentOptions;
+import com.anthropic.claude.sdk.types.options.mcp.McpSdkServerConfig;
 import com.anthropic.claude.sdk.types.permissions.ToolPermissionCallback;
 
 import java.util.HashMap;
@@ -130,9 +131,9 @@ public class ClaudeAgentSdk {
 
         Map<String, SdkMcpServer> sdkServers = new HashMap<>();
         if (safeOptions.getMcpServers() != null) {
-            safeOptions.getMcpServers().forEach((name, value) -> {
-                if (value instanceof SdkMcpServer) {
-                    sdkServers.put(name, (SdkMcpServer) value);
+            safeOptions.getMcpServers().forEach((name, config) -> {
+                if (config instanceof McpSdkServerConfig sdkConfig && sdkConfig.instance() != null) {
+                    sdkServers.put(name, sdkConfig.instance());
                 }
             });
         }

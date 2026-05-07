@@ -3,6 +3,7 @@ package com.anthropic.claude.sdk.types.options;
 import com.anthropic.claude.sdk.session.SessionStore;
 import com.anthropic.claude.sdk.transport.SpawnProcessFunction;
 import com.anthropic.claude.sdk.types.hooks.HookCallbackMatcher;
+import com.anthropic.claude.sdk.types.options.mcp.McpServerConfig;
 import com.anthropic.claude.sdk.types.permissions.ToolPermissionCallback;
 
 import java.nio.file.Path;
@@ -35,7 +36,7 @@ public final class ClaudeAgentOptions {
     private final Map<String, List<HookCallbackMatcher>> hooks;
     private final Path cliPath;
     private final Path cwd;
-    private final Map<String, Object> mcpServers;
+    private final Map<String, McpServerConfig> mcpServers;
     private final Map<String, String> env;
     private final List<Path> addDirs;
     private final boolean continueConversation;
@@ -230,7 +231,7 @@ public final class ClaudeAgentOptions {
         return cwd;
     }
 
-    public Map<String, Object> getMcpServers() {
+    public Map<String, McpServerConfig> getMcpServers() {
         return mcpServers;
     }
 
@@ -364,7 +365,7 @@ public final class ClaudeAgentOptions {
         private Map<String, List<HookCallbackMatcher>> hooks = new HashMap<>();
         private Path cliPath;
         private Path cwd;
-        private Map<String, Object> mcpServers = new HashMap<>();
+        private Map<String, McpServerConfig> mcpServers = new HashMap<>();
         private Map<String, String> env = new HashMap<>();
         private List<Path> addDirs = new ArrayList<>();
         private boolean continueConversation = false;
@@ -475,8 +476,16 @@ public final class ClaudeAgentOptions {
             return this;
         }
 
-        public Builder mcpServers(Map<String, Object> mcpServers) {
+        public Builder mcpServers(Map<String, McpServerConfig> mcpServers) {
             this.mcpServers = mcpServers != null ? new HashMap<>(mcpServers) : new HashMap<>();
+            return this;
+        }
+
+        /**
+         * Add a single MCP server configuration.
+         */
+        public Builder mcpServer(String name, McpServerConfig config) {
+            this.mcpServers.put(name, config);
             return this;
         }
 

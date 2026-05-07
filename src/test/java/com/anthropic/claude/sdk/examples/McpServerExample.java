@@ -7,6 +7,7 @@ import com.anthropic.claude.sdk.types.content.TextBlock;
 import com.anthropic.claude.sdk.types.messages.AssistantMessage;
 import com.anthropic.claude.sdk.types.messages.Message;
 import com.anthropic.claude.sdk.types.options.ClaudeAgentOptions;
+import com.anthropic.claude.sdk.types.options.mcp.McpSdkServerConfig;
 
 import java.util.List;
 import java.util.Map;
@@ -50,9 +51,14 @@ public class McpServerExample {
                 .tools(Map.of(addTool.getName(), addTool))
                 .build();
 
+        McpSdkServerConfig sdkConfig = McpSdkServerConfig.builder()
+                .name("calculator")
+                .instance(server)
+                .build();
+
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
                 .allowedTools(List.of("add_numbers"))
-                .mcpServers(Map.of("calc", server))
+                .mcpServer("calc", sdkConfig)
                 .build();
 
         ClaudeAgentSdk.query(

@@ -9,6 +9,8 @@ import com.anthropic.claude.sdk.types.options.AgentDefinition;
 import com.anthropic.claude.sdk.types.options.ClaudeAgentOptions;
 import com.anthropic.claude.sdk.types.options.SdkPluginConfig;
 import com.anthropic.claude.sdk.types.options.SettingSource;
+import com.anthropic.claude.sdk.types.options.mcp.McpSdkServerConfig;
+import com.anthropic.claude.sdk.types.options.mcp.McpServerConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -458,29 +460,25 @@ public class SubprocessTransport implements Transport {
         }
     }
 
-    private Map<String, Object> sanitizeMcpServers(Map<String, Object> servers) {
+    private Map<String, Object> sanitizeMcpServers(Map<String, McpServerConfig> servers) {
         Map<String, Object> sanitized = new HashMap<>();
-        for (Map.Entry<String, Object> entry : servers.entrySet()) {
-            Object value = entry.getValue();
-            if (value instanceof SdkMcpServer) {
-                sanitized.put(entry.getKey(), ((SdkMcpServer) value).toCliConfig());
-            } else if (value instanceof Map<?, ?>) {
-                Map<?, ?> rawMap = (Map<?, ?>) value;
-                Map<String, Object> normalized = new HashMap<>();
-                for (Map.Entry<?, ?> inner : rawMap.entrySet()) {
-                    Object key = inner.getKey();
-                    if (!(key instanceof String)) {
-                        continue;
+        for (Map.Entry<String, McpServerConfig> entry : servers.entrySet()) {
+            McpServerConfig config = entry.getValue();
+            if (config instanceof McpSdkServerConfig sdkConfig) {
+                // In-process SDK server — convert to CLI-compatible config
+                if (sdkConfig.instance() != null) {
+                    sanitized.put(entry.getKey(), sdkConfig.instance().toCliConfig());
+                } else {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("type", "sdk");
+                    if (sdkConfig.name() != null) {
+                        map.put("name", sdkConfig.name());
                     }
-                    String keyStr = (String) key;
-                    if ("instance".equals(keyStr)) {
-                        continue;
-                    }
-                    normalized.put(keyStr, inner.getValue());
+                    sanitized.put(entry.getKey(), map);
                 }
-                sanitized.put(entry.getKey(), normalized);
-            } else if (value != null) {
-                sanitized.put(entry.getKey(), value);
+            } else {
+                // Stdio, HTTP, SSE configs — serialize directly via Jackson
+                sanitized.put(entry.getKey(), config);
             }
         }
         return sanitized;
