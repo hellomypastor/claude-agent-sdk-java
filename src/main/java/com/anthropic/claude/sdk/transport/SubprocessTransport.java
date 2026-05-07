@@ -464,7 +464,8 @@ public class SubprocessTransport implements Transport {
         Map<String, Object> sanitized = new HashMap<>();
         for (Map.Entry<String, McpServerConfig> entry : servers.entrySet()) {
             McpServerConfig config = entry.getValue();
-            if (config instanceof McpSdkServerConfig sdkConfig) {
+            if (config instanceof McpSdkServerConfig) {
+                McpSdkServerConfig sdkConfig = (McpSdkServerConfig) config;
                 // In-process SDK server — convert to CLI-compatible config
                 if (sdkConfig.instance() != null) {
                     sanitized.put(entry.getKey(), sdkConfig.instance().toCliConfig());

@@ -2,9 +2,22 @@ package com.anthropic.claude.sdk.session;
 
 /**
  * Information about a stored session.
- *
- * @param sessionId the session identifier
- * @param mtime     the last modification time in epoch millis
  */
-public record SessionInfo(String sessionId, long mtime) {
+public final class SessionInfo {
+
+    private final String sessionId;
+    private final long mtime;
+
+    public SessionInfo(String sessionId, long mtime) {
+        this.sessionId = sessionId;
+        this.mtime = mtime;
+    }
+
+    public String sessionId() {
+        return sessionId;
+    }
+
+    public long mtime() {
+        return mtime;
+    }
 }

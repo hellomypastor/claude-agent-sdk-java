@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * Base sealed interface for all content blocks in messages.
+ * Base interface for all content blocks in messages.
  */
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = ToolUseBlock.class, name = "tool_use"),
         @JsonSubTypes.Type(value = ToolResultBlock.class, name = "tool_result")
 })
-public sealed interface ContentBlock permits TextBlock, ThinkingBlock, ToolUseBlock, ToolResultBlock {
+public interface ContentBlock {
 
     /**
      * Get the type of this content block.

@@ -1,14 +1,10 @@
 package com.anthropic.claude.sdk.types.hooks;
 
 /**
- * Sealed interface for all hook input types.
+ * Interface for all hook input types.
  * Each hook event has a corresponding input type that carries event-specific data.
  */
-public sealed interface HookInput
-        permits PreToolUseHookInput, PostToolUseHookInput, PostToolUseFailureHookInput,
-                NotificationHookInput, UserPromptSubmitHookInput, SessionStartHookInput,
-                SessionEndHookInput, StopHookInput, SubagentStartHookInput,
-                SubagentStopHookInput, PreCompactHookInput, PermissionRequestHookInput {
+public interface HookInput {
 
     /**
      * Returns the hook event name for this input type.

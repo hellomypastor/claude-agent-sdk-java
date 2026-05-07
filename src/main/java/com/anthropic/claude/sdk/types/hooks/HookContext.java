@@ -2,8 +2,15 @@ package com.anthropic.claude.sdk.types.hooks;
 
 /**
  * Context provided to hook executions.
- *
- * @param signal placeholder for cancellation support (AbortSignal equivalent)
  */
-public record HookContext(Object signal) {
+public final class HookContext {
+    private final Object signal;
+
+    public HookContext(Object signal) {
+        this.signal = signal;
+    }
+
+    public Object signal() {
+        return signal;
+    }
 }

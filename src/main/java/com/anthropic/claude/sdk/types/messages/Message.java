@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
- * Base sealed interface for all SDK message types.
+ * Base interface for all SDK message types.
  * Mirrors the TypeScript SDK's SDKMessage union type.
  */
 @JsonTypeInfo(
@@ -25,10 +25,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = ToolProgressMessage.class, name = "tool_progress"),
         @JsonSubTypes.Type(value = AuthStatusMessage.class, name = "auth_status")
 })
-public sealed interface Message permits
-        UserMessage, AssistantMessage, SystemInitMessage, SystemStatusMessage,
-        SystemCompactBoundaryMessage, SystemHookResponseMessage,
-        ResultMessage, StreamEvent, ToolProgressMessage, AuthStatusMessage {
+public interface Message {
 
     /**
      * Get the type of this message.

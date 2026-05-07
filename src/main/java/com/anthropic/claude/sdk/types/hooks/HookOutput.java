@@ -4,18 +4,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Sealed interface for hook outputs.
+ * Interface for hook outputs.
  * A hook can return either an async result (requesting deferred processing)
  * or a synchronous result with control flow directives.
  */
-public sealed interface HookOutput permits HookOutput.AsyncHookOutput, HookOutput.SyncHookOutput {
+public interface HookOutput {
 
     /**
      * Async hook output indicating the hook result will be provided later.
-     *
-     * @param asyncTimeout timeout in milliseconds for the async operation
      */
-    record AsyncHookOutput(int asyncTimeout) implements HookOutput {
+    final class AsyncHookOutput implements HookOutput {
+        private final int asyncTimeout;
+
+        public AsyncHookOutput(int asyncTimeout) {
+            this.asyncTimeout = asyncTimeout;
+        }
+
+        public int asyncTimeout() {
+            return asyncTimeout;
+        }
     }
 
     /**

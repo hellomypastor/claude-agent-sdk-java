@@ -6,12 +6,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Text content block.
  */
-public record TextBlock(
-        @JsonProperty("text") String text
-) implements ContentBlock {
+public final class TextBlock implements ContentBlock {
+
+    private final String text;
 
     @JsonCreator
-    public TextBlock {
+    public TextBlock(
+            @JsonProperty("text") String text
+    ) {
+        this.text = text;
+    }
+
+    @JsonProperty("text")
+    public String text() {
+        return text;
     }
 
     @Override

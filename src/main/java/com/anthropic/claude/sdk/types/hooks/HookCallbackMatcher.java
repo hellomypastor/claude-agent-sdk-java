@@ -4,10 +4,27 @@ import java.util.List;
 
 /**
  * Matches hooks to specific tools or patterns, with an optional timeout.
- *
- * @param matcher tool name pattern (e.g. "Bash", "*", etc.)
- * @param hooks   list of hook callbacks to execute when matched
- * @param timeout optional timeout in milliseconds (may be null)
  */
-public record HookCallbackMatcher(String matcher, List<HookCallback> hooks, Integer timeout) {
+public final class HookCallbackMatcher {
+    private final String matcher;
+    private final List<HookCallback> hooks;
+    private final Integer timeout;
+
+    public HookCallbackMatcher(String matcher, List<HookCallback> hooks, Integer timeout) {
+        this.matcher = matcher;
+        this.hooks = hooks;
+        this.timeout = timeout;
+    }
+
+    public String matcher() {
+        return matcher;
+    }
+
+    public List<HookCallback> hooks() {
+        return hooks;
+    }
+
+    public Integer timeout() {
+        return timeout;
+    }
 }

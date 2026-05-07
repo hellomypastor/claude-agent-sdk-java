@@ -132,7 +132,8 @@ public class ClaudeAgentSdk {
         Map<String, SdkMcpServer> sdkServers = new HashMap<>();
         if (safeOptions.getMcpServers() != null) {
             safeOptions.getMcpServers().forEach((name, config) -> {
-                if (config instanceof McpSdkServerConfig sdkConfig && sdkConfig.instance() != null) {
+                if (config instanceof McpSdkServerConfig && ((McpSdkServerConfig) config).instance() != null) {
+                    McpSdkServerConfig sdkConfig = (McpSdkServerConfig) config;
                     sdkServers.put(name, sdkConfig.instance());
                 }
             });

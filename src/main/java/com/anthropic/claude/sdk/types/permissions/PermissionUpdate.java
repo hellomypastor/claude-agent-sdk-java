@@ -7,17 +7,36 @@ import java.util.Map;
 /**
  * Permission update payload returned to the CLI.
  */
-public sealed interface PermissionUpdate
-        permits PermissionUpdate.AddRules, PermissionUpdate.ReplaceRules,
-                PermissionUpdate.RemoveRules, PermissionUpdate.SetMode,
-                PermissionUpdate.AddDirectories, PermissionUpdate.RemoveDirectories {
+public interface PermissionUpdate {
 
     /**
      * Serialize this update to a map for CLI consumption.
      */
     Map<String, Object> toMap();
 
-    record AddRules(List<PermissionRuleValue> rules, String behavior, String destination) implements PermissionUpdate {
+    final class AddRules implements PermissionUpdate {
+        private final List<PermissionRuleValue> rules;
+        private final String behavior;
+        private final String destination;
+
+        public AddRules(List<PermissionRuleValue> rules, String behavior, String destination) {
+            this.rules = rules;
+            this.behavior = behavior;
+            this.destination = destination;
+        }
+
+        public List<PermissionRuleValue> rules() {
+            return rules;
+        }
+
+        public String behavior() {
+            return behavior;
+        }
+
+        public String destination() {
+            return destination;
+        }
+
         @Override
         public Map<String, Object> toMap() {
             Map<String, Object> result = new HashMap<>();
@@ -33,7 +52,29 @@ public sealed interface PermissionUpdate
         }
     }
 
-    record ReplaceRules(List<PermissionRuleValue> rules, String behavior, String destination) implements PermissionUpdate {
+    final class ReplaceRules implements PermissionUpdate {
+        private final List<PermissionRuleValue> rules;
+        private final String behavior;
+        private final String destination;
+
+        public ReplaceRules(List<PermissionRuleValue> rules, String behavior, String destination) {
+            this.rules = rules;
+            this.behavior = behavior;
+            this.destination = destination;
+        }
+
+        public List<PermissionRuleValue> rules() {
+            return rules;
+        }
+
+        public String behavior() {
+            return behavior;
+        }
+
+        public String destination() {
+            return destination;
+        }
+
         @Override
         public Map<String, Object> toMap() {
             Map<String, Object> result = new HashMap<>();
@@ -49,7 +90,29 @@ public sealed interface PermissionUpdate
         }
     }
 
-    record RemoveRules(List<PermissionRuleValue> rules, String behavior, String destination) implements PermissionUpdate {
+    final class RemoveRules implements PermissionUpdate {
+        private final List<PermissionRuleValue> rules;
+        private final String behavior;
+        private final String destination;
+
+        public RemoveRules(List<PermissionRuleValue> rules, String behavior, String destination) {
+            this.rules = rules;
+            this.behavior = behavior;
+            this.destination = destination;
+        }
+
+        public List<PermissionRuleValue> rules() {
+            return rules;
+        }
+
+        public String behavior() {
+            return behavior;
+        }
+
+        public String destination() {
+            return destination;
+        }
+
         @Override
         public Map<String, Object> toMap() {
             Map<String, Object> result = new HashMap<>();
@@ -65,7 +128,23 @@ public sealed interface PermissionUpdate
         }
     }
 
-    record SetMode(String mode, String destination) implements PermissionUpdate {
+    final class SetMode implements PermissionUpdate {
+        private final String mode;
+        private final String destination;
+
+        public SetMode(String mode, String destination) {
+            this.mode = mode;
+            this.destination = destination;
+        }
+
+        public String mode() {
+            return mode;
+        }
+
+        public String destination() {
+            return destination;
+        }
+
         @Override
         public Map<String, Object> toMap() {
             Map<String, Object> result = new HashMap<>();
@@ -78,7 +157,23 @@ public sealed interface PermissionUpdate
         }
     }
 
-    record AddDirectories(List<String> directories, String destination) implements PermissionUpdate {
+    final class AddDirectories implements PermissionUpdate {
+        private final List<String> directories;
+        private final String destination;
+
+        public AddDirectories(List<String> directories, String destination) {
+            this.directories = directories;
+            this.destination = destination;
+        }
+
+        public List<String> directories() {
+            return directories;
+        }
+
+        public String destination() {
+            return destination;
+        }
+
         @Override
         public Map<String, Object> toMap() {
             Map<String, Object> result = new HashMap<>();
@@ -91,7 +186,23 @@ public sealed interface PermissionUpdate
         }
     }
 
-    record RemoveDirectories(List<String> directories, String destination) implements PermissionUpdate {
+    final class RemoveDirectories implements PermissionUpdate {
+        private final List<String> directories;
+        private final String destination;
+
+        public RemoveDirectories(List<String> directories, String destination) {
+            this.directories = directories;
+            this.destination = destination;
+        }
+
+        public List<String> directories() {
+            return directories;
+        }
+
+        public String destination() {
+            return destination;
+        }
+
         @Override
         public Map<String, Object> toMap() {
             Map<String, Object> result = new HashMap<>();

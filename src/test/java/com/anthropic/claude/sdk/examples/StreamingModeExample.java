@@ -14,13 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 /**
- * Streaming mode example similar to Python's streaming_mode.py.
- * <p>
- * Demonstrates:
- * 1. Connecting without an initial prompt
- * 2. Streaming user events (string and dict formats)
- * 3. Interrupting mid-conversation
- * 4. Consuming messages lazily from Claude
+ * Streaming mode example.
  */
 public class StreamingModeExample {
 
@@ -37,17 +31,14 @@ public class StreamingModeExample {
         try (ClaudeSDKClient client = new ClaudeSDKClient(options)) {
             client.connect().join();
 
-            // Simple string prompt
             System.out.println("Sending initial prompt...");
             client.query("Describe the Claude Agent SDK in two sentences.").join();
             drainStream(client);
 
-            // Structured events
             System.out.println("Sending structured events...");
             client.query(structuredConversation()).join();
             drainStream(client);
 
-            // Interrupt demo
             CompletableFuture<Void> streaming = client.query(longRunningPrompt());
             Thread.sleep(1000);
             System.out.println("Interrupting conversation...");
@@ -86,7 +77,8 @@ public class StreamingModeExample {
                 Message msg = iterator.next();
                 if (msg instanceof AssistantMessage) {
                     System.out.println("Assistant chunk received");
-                } else if (msg instanceof ResultMessage result) {
+                } else if (msg instanceof ResultMessage) {
+                    ResultMessage result = (ResultMessage) msg;
                     System.out.println("Session " + result.getSessionId()
                             + " finished with subtype " + result.getSubtype());
                     break;

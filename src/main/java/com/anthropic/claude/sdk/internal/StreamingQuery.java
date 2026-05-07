@@ -387,9 +387,13 @@ public final class StreamingQuery implements AutoCloseable {
         } catch (CompletionException ex) {
             throw new CLIConnectionException("Hook callback failed", ex.getCause());
         }
-        Map<String, Object> outputMap = hookOutput instanceof HookOutput.SyncHookOutput sync
-                ? sync.hookSpecificOutput() != null ? sync.hookSpecificOutput() : Collections.emptyMap()
-                : Collections.emptyMap();
+        Map<String, Object> outputMap;
+        if (hookOutput instanceof HookOutput.SyncHookOutput) {
+            HookOutput.SyncHookOutput sync = (HookOutput.SyncHookOutput) hookOutput;
+            outputMap = sync.hookSpecificOutput() != null ? sync.hookSpecificOutput() : Collections.emptyMap();
+        } else {
+            outputMap = Collections.emptyMap();
+        }
         sendControlSuccess(requestId, normalizeHookOutput(outputMap));
     }
 

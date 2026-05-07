@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Sealed interface for result messages indicating session completion.
+ * Interface for result messages indicating session completion.
  */
-public sealed interface ResultMessage extends Message permits ResultSuccess, ResultError {
+public interface ResultMessage extends Message {
 
     String getSubtype();
 

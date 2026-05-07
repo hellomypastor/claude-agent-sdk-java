@@ -2,10 +2,28 @@ package com.anthropic.claude.sdk.session;
 
 /**
  * Key for identifying a session in the session store.
- *
- * @param projectKey the project identifier
- * @param sessionId  the session identifier
- * @param subpath    optional sub-path within the session
  */
-public record SessionKey(String projectKey, String sessionId, String subpath) {
+public final class SessionKey {
+
+    private final String projectKey;
+    private final String sessionId;
+    private final String subpath;
+
+    public SessionKey(String projectKey, String sessionId, String subpath) {
+        this.projectKey = projectKey;
+        this.sessionId = sessionId;
+        this.subpath = subpath;
+    }
+
+    public String projectKey() {
+        return projectKey;
+    }
+
+    public String sessionId() {
+        return sessionId;
+    }
+
+    public String subpath() {
+        return subpath;
+    }
 }

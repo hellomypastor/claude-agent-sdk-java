@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Result of a permission check.
  */
-public sealed interface PermissionResult permits PermissionResult.Allow, PermissionResult.Deny {
+public interface PermissionResult {
 
     static Allow allow() {
         return new Allow(null, Collections.emptyList(), null);
@@ -32,20 +32,54 @@ public sealed interface PermissionResult permits PermissionResult.Allow, Permiss
     /**
      * Permission granted.
      */
-    record Allow(
-            Map<String, Object> updatedInput,
-            List<PermissionUpdate> updatedPermissions,
-            String toolUseID
-    ) implements PermissionResult {
+    final class Allow implements PermissionResult {
+        private final Map<String, Object> updatedInput;
+        private final List<PermissionUpdate> updatedPermissions;
+        private final String toolUseID;
+
+        public Allow(Map<String, Object> updatedInput, List<PermissionUpdate> updatedPermissions, String toolUseID) {
+            this.updatedInput = updatedInput;
+            this.updatedPermissions = updatedPermissions;
+            this.toolUseID = toolUseID;
+        }
+
+        public Map<String, Object> updatedInput() {
+            return updatedInput;
+        }
+
+        public List<PermissionUpdate> updatedPermissions() {
+            return updatedPermissions;
+        }
+
+        public String toolUseID() {
+            return toolUseID;
+        }
     }
 
     /**
      * Permission denied.
      */
-    record Deny(
-            String message,
-            Boolean interrupt,
-            String toolUseID
-    ) implements PermissionResult {
+    final class Deny implements PermissionResult {
+        private final String message;
+        private final Boolean interrupt;
+        private final String toolUseID;
+
+        public Deny(String message, Boolean interrupt, String toolUseID) {
+            this.message = message;
+            this.interrupt = interrupt;
+            this.toolUseID = toolUseID;
+        }
+
+        public String message() {
+            return message;
+        }
+
+        public Boolean interrupt() {
+            return interrupt;
+        }
+
+        public String toolUseID() {
+            return toolUseID;
+        }
     }
 }

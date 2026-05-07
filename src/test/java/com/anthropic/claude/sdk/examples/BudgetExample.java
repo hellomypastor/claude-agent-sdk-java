@@ -12,14 +12,6 @@ import java.util.List;
 
 /**
  * Budget Control Example - Demonstrates max_budget_usd option.
- * <p>
- * This example shows how to:
- * 1. Run queries without budget limits
- * 2. Set reasonable budget limits
- * 3. Handle budget exceeded scenarios
- * <p>
- * Usage:
- * java BudgetExample
  */
 public class BudgetExample {
 
@@ -27,92 +19,82 @@ public class BudgetExample {
         System.out.println("=".repeat(60));
         System.out.println("Budget Control Example");
         System.out.println("=".repeat(60));
-        System.out.println("This example demonstrates using max_budget_usd to control API costs.");
 
         withoutBudget();
         withReasonableBudget();
         withTightBudget();
-
-        System.out.println("Note: Budget checking happens after each API call completes,");
-        System.out.println("so the final cost may slightly exceed the specified budget.");
     }
 
-    /**
-     * Example 1: Without budget limit
-     */
     static void withoutBudget() {
         System.out.println("=== Without Budget Limit ===");
 
         ClaudeAgentSdk.query("What is 2 + 2?")
                 .forEach(message -> {
-                    if (message instanceof AssistantMessage assistantMsg) {
+                    if (message instanceof AssistantMessage) {
+                        AssistantMessage assistantMsg = (AssistantMessage) message;
                         assistantMsg.content().forEach(block -> {
-                            if (block instanceof TextBlock textBlock) {
-                                System.out.println("Claude: " + textBlock.text());
+                            if (block instanceof TextBlock) {
+                                System.out.println("Claude: " + ((TextBlock) block).text());
                             }
                         });
-                    } else if (message instanceof ResultMessage resultMsg) {
+                    } else if (message instanceof ResultMessage) {
+                        ResultMessage resultMsg = (ResultMessage) message;
                         System.out.println("Total cost: $" + String.format("%.4f", resultMsg.getTotalCostUsd()));
                         System.out.println("Status: " + resultMsg.getSubtype());
                     }
                 });
     }
 
-    /**
-     * Example 2: With reasonable budget ($0.10)
-     */
     static void withReasonableBudget() {
         System.out.println("=== With Reasonable Budget ($0.10) ===");
 
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-                .maxBudgetUsd(0.10)  // 10 cents - plenty for a simple query
+                .maxBudgetUsd(0.10)
                 .build();
 
         ClaudeAgentSdk.query("What is 2 + 2?", options)
                 .forEach(message -> {
-                    if (message instanceof AssistantMessage assistantMsg) {
+                    if (message instanceof AssistantMessage) {
+                        AssistantMessage assistantMsg = (AssistantMessage) message;
                         assistantMsg.content().forEach(block -> {
-                            if (block instanceof TextBlock textBlock) {
-                                System.out.println("Claude: " + textBlock.text());
+                            if (block instanceof TextBlock) {
+                                System.out.println("Claude: " + ((TextBlock) block).text());
                             }
                         });
-                    } else if (message instanceof ResultMessage resultMsg) {
+                    } else if (message instanceof ResultMessage) {
+                        ResultMessage resultMsg = (ResultMessage) message;
                         System.out.println("Total cost: $" + String.format("%.4f", resultMsg.getTotalCostUsd()));
                         System.out.println("Status: " + resultMsg.getSubtype());
                     }
                 });
     }
 
-    /**
-     * Example 3: With very tight budget ($0.0001)
-     * This will likely be exceeded
-     */
     static void withTightBudget() {
         System.out.println("=== With Tight Budget ($0.0001) ===");
 
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
-                .maxBudgetUsd(0.0001)  // Very small budget - will be exceeded quickly
-                .allowedTools(List.of("Read"))  // Allow Read tool to make the query more expensive
+                .maxBudgetUsd(0.0001)
+                .allowedTools(List.of("Read"))
                 .build();
 
         ClaudeAgentSdk.query("Read the README.md file and summarize it", options)
                 .forEach(message -> {
-                    if (message instanceof AssistantMessage assistantMsg) {
+                    if (message instanceof AssistantMessage) {
+                        AssistantMessage assistantMsg = (AssistantMessage) message;
                         assistantMsg.content().forEach(block -> {
-                            if (block instanceof TextBlock textBlock) {
-                                System.out.println("Claude: " + textBlock.text());
+                            if (block instanceof TextBlock) {
+                                System.out.println("Claude: " + ((TextBlock) block).text());
                             }
                         });
-                    } else if (message instanceof ResultError resultErr) {
+                    } else if (message instanceof ResultError) {
+                        ResultError resultErr = (ResultError) message;
                         System.out.println("Total cost: $" + String.format("%.4f", resultErr.getTotalCostUsd()));
                         System.out.println("Status: " + resultErr.getSubtype());
-
-                        // Check if budget was exceeded
                         if ("error_max_budget_usd".equals(resultErr.getSubtype())) {
                             System.out.println("WARNING: Budget limit exceeded!");
-                            System.out.println("Note: The cost may exceed the budget by up to one API call's worth");
                         }
-                    } else if (message instanceof ResultMessage resultMsg) {
+                    } else if (message instanceof ResultMessage) {
+                        ResultMessage resultMsg = (ResultMessage) message;
                         System.out.println("Total cost: $" + String.format("%.4f", resultMsg.getTotalCostUsd()));
                         System.out.println("Status: " + resultMsg.getSubtype());
                     }

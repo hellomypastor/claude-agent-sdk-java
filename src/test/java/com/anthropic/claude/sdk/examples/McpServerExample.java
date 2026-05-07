@@ -15,12 +15,6 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Demonstrates building an in-process MCP server in Java.
- * <p>
- * This example mirrors the Python MCP calculator example:
- * 1. Create a custom tool via SdkMcpTool
- * 2. Register tools on SdkMcpServer
- * 3. Supply server via ClaudeAgentOptions.mcpServers
- * 4. Allow Claude to call the custom tool
  */
 public class McpServerExample {
 
@@ -68,10 +62,11 @@ public class McpServerExample {
     }
 
     private static void printMessage(Message message) {
-        if (message instanceof AssistantMessage assistant) {
+        if (message instanceof AssistantMessage) {
+            AssistantMessage assistant = (AssistantMessage) message;
             assistant.content().forEach(block -> {
-                if (block instanceof TextBlock textBlock) {
-                    System.out.println("Claude: " + textBlock.text());
+                if (block instanceof TextBlock) {
+                    System.out.println("Claude: " + ((TextBlock) block).text());
                 }
             });
         }

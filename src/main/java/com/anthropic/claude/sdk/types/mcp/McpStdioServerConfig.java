@@ -11,17 +11,18 @@ import java.util.Map;
  * Launches a child process and communicates via stdin/stdout JSON-RPC.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record McpStdioServerConfig(
-        String type,
-        String command,
-        List<String> args,
-        Map<String, String> env
-) implements McpServerConfig {
+public final class McpStdioServerConfig implements McpServerConfig {
 
-    /**
-     * Create a stdio config with explicit type.
-     */
-    public McpStdioServerConfig {
+    private final String type;
+    private final String command;
+    private final List<String> args;
+    private final Map<String, String> env;
+
+    public McpStdioServerConfig(String type, String command, List<String> args, Map<String, String> env) {
+        this.type = type;
+        this.command = command;
+        this.args = args;
+        this.env = env;
     }
 
     /**
@@ -29,6 +30,23 @@ public record McpStdioServerConfig(
      */
     public McpStdioServerConfig(String command, List<String> args, Map<String, String> env) {
         this(null, command, args, env);
+    }
+
+    @Override
+    public String type() {
+        return type;
+    }
+
+    public String command() {
+        return command;
+    }
+
+    public List<String> args() {
+        return args;
+    }
+
+    public Map<String, String> env() {
+        return env;
     }
 
     public static Builder builder() {

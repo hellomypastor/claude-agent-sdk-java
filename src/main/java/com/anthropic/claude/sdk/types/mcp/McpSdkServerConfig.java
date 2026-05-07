@@ -11,16 +11,30 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * The {@code instance} field is excluded from JSON serialization.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record McpSdkServerConfig(
-        String type,
-        String name,
-        @JsonIgnore SdkMcpServer instance
-) implements McpServerConfig {
+public final class McpSdkServerConfig implements McpServerConfig {
 
-    public McpSdkServerConfig {
-        if (type == null) {
-            type = "sdk";
-        }
+    private final String type;
+    private final String name;
+    @JsonIgnore
+    private final SdkMcpServer instance;
+
+    public McpSdkServerConfig(String type, String name, SdkMcpServer instance) {
+        this.type = type != null ? type : "sdk";
+        this.name = name;
+        this.instance = instance;
+    }
+
+    @Override
+    public String type() {
+        return type;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public SdkMcpServer instance() {
+        return instance;
     }
 
     public static Builder builder() {

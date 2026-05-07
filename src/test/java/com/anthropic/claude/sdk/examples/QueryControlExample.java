@@ -5,6 +5,7 @@ import com.anthropic.claude.sdk.McpServerStatus;
 import com.anthropic.claude.sdk.ModelInfo;
 import com.anthropic.claude.sdk.Query;
 import com.anthropic.claude.sdk.client.ClaudeSDKClient;
+import com.anthropic.claude.sdk.types.content.ContentBlock;
 import com.anthropic.claude.sdk.types.content.TextBlock;
 import com.anthropic.claude.sdk.types.messages.AssistantMessage;
 import com.anthropic.claude.sdk.types.messages.Message;
@@ -13,16 +14,10 @@ import com.anthropic.claude.sdk.types.options.ClaudeAgentOptions;
 import com.anthropic.claude.sdk.types.options.PermissionMode;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Query Control Example - Demonstrates the Query interface for runtime control.
- * <p>
- * This example shows how to:
- * 1. Get available models
- * 2. Check MCP server status
- * 3. Get account info
- * 4. Change model at runtime
- * 5. Send queries and process responses
  */
 public class QueryControlExample {
     public static void main(String[] args) throws Exception {
@@ -57,14 +52,17 @@ public class QueryControlExample {
             // Send a query
             client.query("What is 2+2?").join();
 
-            for (Message msg : client.receiveMessages().toList()) {
-                if (msg instanceof AssistantMessage am) {
-                    for (var block : am.content()) {
-                        if (block instanceof TextBlock tb) {
-                            System.out.println("Response: " + tb.text());
+            List<Message> messages = client.receiveMessages().collect(Collectors.toList());
+            for (Message msg : messages) {
+                if (msg instanceof AssistantMessage) {
+                    AssistantMessage am = (AssistantMessage) msg;
+                    for (ContentBlock block : am.content()) {
+                        if (block instanceof TextBlock) {
+                            System.out.println("Response: " + ((TextBlock) block).text());
                         }
                     }
-                } else if (msg instanceof ResultSuccess rs) {
+                } else if (msg instanceof ResultSuccess) {
+                    ResultSuccess rs = (ResultSuccess) msg;
                     System.out.println("Cost: $" + rs.totalCostUsd());
                 }
             }

@@ -10,16 +10,29 @@ import java.util.Map;
  * Connects to a remote MCP server via HTTP.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record McpHttpServerConfig(
-        String type,
-        String url,
-        Map<String, String> headers
-) implements McpServerConfig {
+public final class McpHttpServerConfig implements McpServerConfig {
 
-    public McpHttpServerConfig {
-        if (type == null) {
-            type = "http";
-        }
+    private final String type;
+    private final String url;
+    private final Map<String, String> headers;
+
+    public McpHttpServerConfig(String type, String url, Map<String, String> headers) {
+        this.type = type != null ? type : "http";
+        this.url = url;
+        this.headers = headers;
+    }
+
+    @Override
+    public String type() {
+        return type;
+    }
+
+    public String url() {
+        return url;
+    }
+
+    public Map<String, String> headers() {
+        return headers;
     }
 
     public static Builder builder() {

@@ -20,14 +20,6 @@ import java.util.stream.Stream;
 
 /**
  * Hooks Example - Demonstrates using hooks with Claude Agent SDK.
- * <p>
- * This example shows various hook patterns:
- * - PreToolUse: Block dangerous commands
- * - PostToolUse: Review tool output
- * - UserPromptSubmit: Add custom context
- * <p>
- * Usage:
- * java HooksExample
  */
 public class HooksExample {
 
@@ -46,16 +38,12 @@ public class HooksExample {
         }
     }
 
-    /**
-     * Example 1: PreToolUse Hook - Block dangerous Bash commands
-     */
     static void preToolUseExample() {
         System.out.println("=== PreToolUse Example ===");
-        System.out.println("This example blocks specific bash commands using PreToolUse hook.");
 
-        // Define hook to check bash commands
         HookCallback checkBashCommand = (input, toolUseId, context) -> {
-            if (input instanceof PreToolUseHookInput preToolInput) {
+            if (input instanceof PreToolUseHookInput) {
+                PreToolUseHookInput preToolInput = (PreToolUseHookInput) input;
                 String toolName = preToolInput.toolName();
 
                 if (!"Bash".equals(toolName)) {
@@ -71,7 +59,6 @@ public class HooksExample {
                 for (String pattern : blockPatterns) {
                     if (command != null && command.contains(pattern)) {
                         System.out.println("WARNING: Blocked command: " + command);
-
                         return CompletableFuture.completedFuture(
                                 HookOutput.SyncHookOutput.builder()
                                         .decision("deny")
@@ -90,7 +77,6 @@ public class HooksExample {
                     HookOutput.SyncHookOutput.builder().build());
         };
 
-        // Configure options with hook
         ClaudeAgentOptions options = ClaudeAgentOptions.builder()
                 .allowedTools(List.of("Bash"))
                 .hooks(Map.of(
@@ -103,39 +89,31 @@ public class HooksExample {
         try (ClaudeSDKClient client = new ClaudeSDKClient(options)) {
             client.connect().join();
 
-            // Test 1: Blocked command
             System.out.println("Test 1: Trying a blocked command (./foo.sh)...");
             client.query("Run the bash command: ./foo.sh --help").join();
             consumeUntilResult(client);
 
             System.out.println("=".repeat(50));
 
-            // Test 2: Allowed command
             System.out.println("Test 2: Trying an allowed command (echo)...");
             client.query("Run the bash command: echo 'Hello from hooks!'").join();
             consumeUntilResult(client);
-
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    /**
-     * Example 2: PostToolUse Hook - Review tool output
-     */
     static void postToolUseExample() {
         System.out.println("=== PostToolUse Example ===");
-        System.out.println("This example reviews tool output and adds context.");
 
         HookCallback reviewToolOutput = (input, toolUseId, context) -> {
-            if (input instanceof PostToolUseHookInput postToolInput) {
+            if (input instanceof PostToolUseHookInput) {
+                PostToolUseHookInput postToolInput = (PostToolUseHookInput) input;
                 Object toolResponse = postToolInput.toolResponse();
 
-                // Check if output contains an error
                 if (toolResponse != null && toolResponse.toString().toLowerCase().contains("error")) {
                     System.out.println("WARNING: Tool execution produced an error");
-
                     return CompletableFuture.completedFuture(
                             HookOutput.SyncHookOutput.builder()
                                     .systemMessage("The command produced an error")
@@ -148,7 +126,6 @@ public class HooksExample {
                                     .build());
                 }
             }
-
             return CompletableFuture.completedFuture(
                     HookOutput.SyncHookOutput.builder().build());
         };
@@ -167,22 +144,18 @@ public class HooksExample {
             System.out.println("Running command that will produce an error...");
             client.query("Run this command: ls /nonexistent_directory").join();
             consumeUntilResult(client);
-
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    /**
-     * Example 3: Strict Approval Hook - Control Write operations
-     */
     static void strictApprovalExample() {
         System.out.println("=== Strict Approval Example ===");
-        System.out.println("This example blocks writes to files containing 'important'.");
 
         HookCallback strictApproval = (input, toolUseId, context) -> {
-            if (input instanceof PreToolUseHookInput preToolInput) {
+            if (input instanceof PreToolUseHookInput) {
+                PreToolUseHookInput preToolInput = (PreToolUseHookInput) input;
                 String toolName = preToolInput.toolName();
 
                 if ("Write".equals(toolName)) {
@@ -192,7 +165,6 @@ public class HooksExample {
 
                     if (filePath != null && filePath.toLowerCase().contains("important")) {
                         System.out.println("BLOCKED: Write to: " + filePath);
-
                         return CompletableFuture.completedFuture(
                                 HookOutput.SyncHookOutput.builder()
                                         .decision("deny")
@@ -207,7 +179,6 @@ public class HooksExample {
                                         .build());
                     }
 
-                    // Allow other writes
                     return CompletableFuture.completedFuture(
                             HookOutput.SyncHookOutput.builder()
                                     .decision("allow")
@@ -220,7 +191,6 @@ public class HooksExample {
                                     .build());
                 }
             }
-
             return CompletableFuture.completedFuture(
                     HookOutput.SyncHookOutput.builder().build());
         };
@@ -237,26 +207,20 @@ public class HooksExample {
         try (ClaudeSDKClient client = new ClaudeSDKClient(options)) {
             client.connect().join();
 
-            // Test 1: Blocked write
             System.out.println("Test 1: Trying to write to important_config.txt (blocked)...");
             client.query("Write 'test' to important_config.txt").join();
             consumeUntilResult(client);
             System.out.println("=".repeat(50));
 
-            // Test 2: Allowed write
             System.out.println("Test 2: Trying to write to regular_file.txt (allowed)...");
             client.query("Write 'test' to regular_file.txt").join();
             consumeUntilResult(client);
-
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    /**
-     * Helper method to consume messages until result
-     */
     static void consumeUntilResult(ClaudeSDKClient client) {
         Stream<Message> stream = client.receiveMessages();
         try {
@@ -273,14 +237,12 @@ public class HooksExample {
         }
     }
 
-    /**
-     * Helper method to display messages
-     */
     static void displayMessage(Message msg) {
-        if (msg instanceof AssistantMessage assistantMsg) {
+        if (msg instanceof AssistantMessage) {
+            AssistantMessage assistantMsg = (AssistantMessage) msg;
             assistantMsg.content().forEach(block -> {
-                if (block instanceof TextBlock textBlock) {
-                    System.out.println("Claude: " + textBlock.text());
+                if (block instanceof TextBlock) {
+                    System.out.println("Claude: " + ((TextBlock) block).text());
                 }
             });
         } else if (msg instanceof ResultMessage) {

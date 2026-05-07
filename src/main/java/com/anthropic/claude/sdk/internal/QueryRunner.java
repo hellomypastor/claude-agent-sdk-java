@@ -94,7 +94,8 @@ public final class QueryRunner {
         }
 
         options.getMcpServers().forEach((name, config) -> {
-            if (config instanceof McpSdkServerConfig sdkConfig && sdkConfig.instance() != null) {
+            if (config instanceof McpSdkServerConfig && ((McpSdkServerConfig) config).instance() != null) {
+                McpSdkServerConfig sdkConfig = (McpSdkServerConfig) config;
                 servers.put(name, sdkConfig.instance());
             }
         });

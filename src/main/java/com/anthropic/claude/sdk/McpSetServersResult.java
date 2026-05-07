@@ -5,14 +5,28 @@ import java.util.Map;
 
 /**
  * Result of setting MCP servers.
- *
- * @param added   list of server names that were added
- * @param removed list of server names that were removed
- * @param errors  map of server name to error message for servers that failed
  */
-public record McpSetServersResult(
-        List<String> added,
-        List<String> removed,
-        Map<String, String> errors
-) {
+public final class McpSetServersResult {
+
+    private final List<String> added;
+    private final List<String> removed;
+    private final Map<String, String> errors;
+
+    public McpSetServersResult(List<String> added, List<String> removed, Map<String, String> errors) {
+        this.added = added;
+        this.removed = removed;
+        this.errors = errors;
+    }
+
+    public List<String> added() {
+        return added;
+    }
+
+    public List<String> removed() {
+        return removed;
+    }
+
+    public Map<String, String> errors() {
+        return errors;
+    }
 }
